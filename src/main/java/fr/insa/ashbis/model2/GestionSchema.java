@@ -44,6 +44,7 @@ public class GestionSchema {
                 st.executeUpdate("create table joueur ( "
                         + "id integer not null primary key" + ","
                         + " surnom varchar(30) unique,"
+                        + " priority char(1),"
                         + " categorie char(1),"
                         + " taillcm integer"
                         + ") "
