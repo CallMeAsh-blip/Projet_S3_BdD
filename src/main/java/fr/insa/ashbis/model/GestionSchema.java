@@ -45,10 +45,10 @@ public class GestionSchema {
                         + " prenom varchar(64) not null,"
                         + " nom varchar(64) not null,"
                         + " genre varchar(32),"
-                        + " DateDeNaissance DATE not null,"
+                        + " dateDeNaissance DATE not null,"
                         + " priority integer,"
                         + " score integer,"
-                        + " IdEquipe integer"
+                        + " idEquipe integer"
                         + ")"
                 );
                 st.executeUpdate("create table equipe ( "
@@ -66,10 +66,10 @@ public class GestionSchema {
                 st.executeUpdate("create table tournoi ( "
                         + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
                         + " nom varchar(64) not null,"
-                        + " NbrTerrain integer not null,"
-                        + " MaxJoueurEquipe integer not null,"
-                        + " MaxEquipeTerrain integer not null,"
-                        + " NbrRonde integer not null"        
+                        + " nbrTerrain integer not null,"
+                        + " maxJoueurEquipe integer not null,"
+                        + " maxEquipeTerrain integer not null,"
+                        + " nbrRonde integer not null"        
                         + ")"
                 );
                 

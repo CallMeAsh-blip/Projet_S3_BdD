@@ -20,18 +20,18 @@ public class Joueur extends ClasseMiroir {
     private String prenom;
     private String nom;
     private String genre;
-    private String DateDeNaissance;
+    private String dateDeNaissance;
     private int score;
-    private int IdEquipe;
+    private int idEquipe;
     private int priority;
 
     public Joueur(String prenom, String nom, String genre, String DateDeNaissance, int score, int IdEquipe, int priority) {
         this.prenom = prenom;
         this.nom = nom;
         this.genre = genre;
-        this.DateDeNaissance = DateDeNaissance;
+        this.dateDeNaissance = DateDeNaissance;
         this.score = score;
-        this.IdEquipe = IdEquipe;
+        this.idEquipe = IdEquipe;
         this.priority = priority;
     }
 
@@ -40,7 +40,7 @@ public class Joueur extends ClasseMiroir {
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
         PreparedStatement pst = con.prepareStatement(
-                "insert into joueur(prenom,nom,genre,DateDeNaissance,priority,score,IdEquipe) values (?,?,?,?,?,?,?)",
+                "insert into joueur(prenom,nom,genre,dateDeNaissance,priority,score,idEquipe) values (?,?,?,?,?,?,?)",
                 PreparedStatement.RETURN_GENERATED_KEYS
         );
         pst.setString(1, this.getPrenom());
@@ -133,14 +133,14 @@ public class Joueur extends ClasseMiroir {
      * @return the DateDeNaissance
      */
     public String getDateDeNaissance() {
-        return DateDeNaissance;
+        return dateDeNaissance;
     }
 
     /**
      * @param DateDeNaissance the DateDeNaissance to set
      */
     public void setDateDeNaissance(String DateDeNaissance) {
-        this.DateDeNaissance = DateDeNaissance;
+        this.dateDeNaissance = DateDeNaissance;
     }
 
     /**
@@ -161,14 +161,14 @@ public class Joueur extends ClasseMiroir {
      * @return the IdEquipe
      */
     public int getIdEquipe() {
-        return IdEquipe;
+        return idEquipe;
     }
 
     /**
      * @param IdEquipe the IdEquipe to set
      */
     public void setIdEquipe(int IdEquipe) {
-        this.IdEquipe = IdEquipe;
+        this.idEquipe = IdEquipe;
     }
     
     
