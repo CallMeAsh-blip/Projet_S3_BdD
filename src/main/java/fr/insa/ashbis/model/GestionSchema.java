@@ -42,17 +42,20 @@ public class GestionSchema {
                 // creation des tables
                 st.executeUpdate("create table joueur ( "
                         + "id integer not null primary key" + ","
-                        + " surnom varchar(30) unique,"
+                        + " prenom varchar(64),"
+                        + " nom varchar(64),"
+                        + " genre varchar(32),"
+                        + " DateDeNaissance DATE,"
                         + " priority integer,"
-                        + " categorie char(1),"
-                        + " taillcm integer"
+                        + " score integer"
                         + ") "
                 );
-                
-                
-                
-                
-
+                st.executeUpdate("create table equipe ( "
+                        + "id integer not null primary key" + ","
+                        + " nom varchar(64) unique,"
+                        + " terrain integer,"
+                        + ") "
+                );
                 con.commit();
             }
         } catch (SQLException ex) {
