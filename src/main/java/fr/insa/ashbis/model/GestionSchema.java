@@ -41,22 +41,48 @@ public class GestionSchema {
             try (Statement st = con.createStatement()) {
                 // creation des tables
                 st.executeUpdate("create table joueur ( "
-                        + "id integer not null primary key" + ","
-                        + " prenom varchar(64),"
-                        + " nom varchar(64),"
+                        + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
+                        + " prenom varchar(64) not null,"
+                        + " nom varchar(64) not null,"
                         + " genre varchar(32),"
-                        + " DateDeNaissance DATE,"
+                        + " DateDeNaissance DATE not null,"
                         + " priority integer,"
-                        + " score integer"
-                        + ") "
+                        + " score integer,"
+                        + " IdEquipe integer"
+                        + ")"
                 );
                 st.executeUpdate("create table equipe ( "
-                        + "id integer not null primary key" + ","
-                        + " nom varchar(64) unique,"
-                        + " terrain integer,"
-                        + ") "
+                        + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
+                        + " nom varchar(64) not null,"
+                        + " terrain integer"
+                        + ")"
                 );
+                st.executeUpdate("create table matchs ( "
+                        + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
+                        + " idTerrain integer not null,"
+                        + " idRonde integer"
+                        + ")"
+                );
+                st.executeUpdate("create table tournoi ( "
+                        + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
+                        + " nom varchar(64) not null,"
+                        + " NbrTerrain integer not null,"
+                        + " MaxJoueurEquipe integer not null,"
+                        + " MaxEquipeTerrain integer not null,"
+                        + " NbrRonde integer not null"        
+                        + ")"
+                );
+                
+                st.executeUpdate("create table ronde ( "
+                        + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
+                        + " timestampDebut TIMESTAMP,"
+                        + " statut integer not null,"
+                        + " timestampFin TIMESTAMP"       
+                        + ")"
+                );
+                
                 con.commit();
+                
             }
         } catch (SQLException ex) {
             con.rollback();
@@ -65,6 +91,7 @@ public class GestionSchema {
             con.setAutoCommit(true);
         }
     }
+    
 
     /**
      *
@@ -76,6 +103,10 @@ public class GestionSchema {
             
             try {
                 st.executeUpdate("drop table joueur");
+                st.executeUpdate("drop table equipe");
+                st.executeUpdate("drop table tournoi");
+                st.executeUpdate("drop table ronde");
+                st.executeUpdate("drop table matchs");
             } catch (SQLException ex) {
             }
         }
