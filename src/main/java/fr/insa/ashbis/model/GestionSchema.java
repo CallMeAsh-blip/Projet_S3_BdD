@@ -43,17 +43,14 @@ public class GestionSchema {
                 st.executeUpdate("create table joueur ( "
                         + "id integer not null primary key" + ","
                         + " surnom varchar(30) unique,"
+                        + " priority integer,"
                         + " categorie char(1),"
-                        + " taillecm integer"
+                        + " taillcm integer"
                         + ") "
                 );
-                st.executeUpdate("create table match ( "
-                        + "id integer not null primary key" + ","
-                        + " surnom varchar(30) unique,"
-                        + " categorie char(1),"
-                        + " taillecm integer"
-                        + ") "
-                );
+                
+                
+                
                 
 
                 con.commit();
