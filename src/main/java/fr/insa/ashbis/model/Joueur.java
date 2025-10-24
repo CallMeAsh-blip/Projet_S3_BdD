@@ -20,22 +20,25 @@ public class Joueur extends ClasseMiroir {
     private String surnom;
     private String categorie;
     private int taillecm;
+    private int priority;
 
     public Joueur(String surnom, String categorie, int taillecm) {
         this.surnom = surnom;
         this.categorie = categorie;
         this.taillecm = taillecm;
+        this.priority=0;
     }
 
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
         PreparedStatement pst = con.prepareStatement(
-                "insert into joueur(surnom,categorie,taillecm) values (?,?,?)",
-                PreparedStatement.RETURN_GENERATED_KEYS               
+                "insert into joueur(surnom,priority,categorie,taillecm) values (?,?,?,?)",
+                PreparedStatement.RETURN_GENERATED_KEYS
         );
-        pst.setString(1,this.surnom);
-        pst.setString(2, this.categorie);
-        pst.setInt(3, this.taillecm);
+        pst.setString(1, this.surnom);
+        pst.setInt(2, this.priority);
+        pst.setString(3, this.categorie);
+        pst.setInt(4, this.taillecm);
         pst.executeUpdate();
         return pst;
     }
@@ -44,23 +47,31 @@ public class Joueur extends ClasseMiroir {
         return ("{joueur" + this.surnom + ":" + this.getId() + "}");
     }
 
-    
-    public static void testCreer(){
+    public static void testCreer() {
         try {
-            Joueur j = new Joueur("test","j",183);
-            System.out.println("joueur :"+j);
+            Joueur j = new Joueur("test", "j", 183);
+            System.out.println("joueur :" + j);
             j.saveInDB(ConnectionSimpleSGBD.defaultCon());
-            System.out.println("joueur :"+j);
+            System.out.println("joueur :" + j);
         } catch (SQLException ex) {
             throw new Error(ex);
         }
     }
+    public void resetPriority(){
+        if(this.priority==1){
+            priority=0;
+        }
+    }
     
+    public void setPriority(){
+        if(this.priority==0){
+            priority=1;
+        }
+    }
     public static void main(String[] args) {
         testCreer();
     }
-    
-    
+
     /**
      * @return the surnom
      */
@@ -102,5 +113,6 @@ public class Joueur extends ClasseMiroir {
     public void setTaillecm(int taillecm) {
         this.taillecm = taillecm;
     }
+
 
 }
