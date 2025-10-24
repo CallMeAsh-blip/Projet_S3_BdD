@@ -17,39 +17,50 @@ import java.sql.Statement;
  */
 public class Joueur extends ClasseMiroir {
 
-    private String surnom;
-    private String categorie;
-    private int taillecm;
+    private String prenom;
+    private String nom;
+    private String genre;
+    private String DateDeNaissance;
+    private int score;
+    private int IdEquipe;
     private int priority;
 
-    public Joueur(String surnom, String categorie, int taillecm) {
-        this.surnom = surnom;
-        this.categorie = categorie;
-        this.taillecm = taillecm;
-        this.priority=0;
+    public Joueur(String prenom, String nom, String genre, String DateDeNaissance, int score, int IdEquipe, int priority) {
+        this.prenom = prenom;
+        this.nom = nom;
+        this.genre = genre;
+        this.DateDeNaissance = DateDeNaissance;
+        this.score = score;
+        this.IdEquipe = IdEquipe;
+        this.priority = priority;
     }
+
+    
 
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
         PreparedStatement pst = con.prepareStatement(
-                "insert into joueur(surnom,priority,categorie,taillecm) values (?,?,?,?)",
+                "insert into joueur(prenom,nom,genre,DateDeNaissance,priority,score,IdEquipe) values (?,?,?,?,?,?,?)",
                 PreparedStatement.RETURN_GENERATED_KEYS
         );
-        pst.setString(1, this.surnom);
-        pst.setInt(2, this.priority);
-        pst.setString(3, this.categorie);
-        pst.setInt(4, this.taillecm);
+        pst.setString(1, this.getPrenom());
+        pst.setString(2, this.getNom());
+        pst.setString(3, this.getGenre());
+        pst.setString(4, this.getDateDeNaissance());
+        pst.setInt(5, this.priority);
+        pst.setInt(6, this.getScore());
+        pst.setInt(7, this.getIdEquipe());
         pst.executeUpdate();
         return pst;
     }
 
     public String toString() {
-        return ("{joueur" + this.surnom + ":" + this.getId() + "}");
+        return ("{joueur " + this.getPrenom() + " " +this.getNom() + ":" + this.getId() + "}");
     }
 
     public static void testCreer() {
         try {
-            Joueur j = new Joueur("test", "j", 183);
+            Joueur j = new Joueur("test", "test","non binaire","2006-12-08",0,0,1);
             System.out.println("joueur :" + j);
             j.saveInDB(ConnectionSimpleSGBD.defaultCon());
             System.out.println("joueur :" + j);
@@ -72,47 +83,94 @@ public class Joueur extends ClasseMiroir {
         testCreer();
     }
 
-    /**
-     * @return the surnom
-     */
-    public String getSurnom() {
-        return surnom;
+    public int getPriority() {
+        return priority;
     }
 
     /**
-     * @param surnom the surnom to set
+     * @return the prenom
      */
-    public void setSurnom(String surnom) {
-        this.surnom = surnom;
+    public String getPrenom() {
+        return prenom;
     }
 
     /**
-     * @return the categorie
+     * @param prenom the prenom to set
      */
-    public String getCategorie() {
-        return categorie;
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
     }
 
     /**
-     * @param categorie the categorie to set
+     * @return the nom
      */
-    public void setCategorie(String categorie) {
-        this.categorie = categorie;
+    public String getNom() {
+        return nom;
     }
 
     /**
-     * @return the taillecm
+     * @param nom the nom to set
      */
-    public int getTaillecm() {
-        return taillecm;
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
     /**
-     * @param taillecm the taillecm to set
+     * @return the genre
      */
-    public void setTaillecm(int taillecm) {
-        this.taillecm = taillecm;
+    public String getGenre() {
+        return genre;
     }
 
+    /**
+     * @param genre the genre to set
+     */
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
 
+    /**
+     * @return the DateDeNaissance
+     */
+    public String getDateDeNaissance() {
+        return DateDeNaissance;
+    }
+
+    /**
+     * @param DateDeNaissance the DateDeNaissance to set
+     */
+    public void setDateDeNaissance(String DateDeNaissance) {
+        this.DateDeNaissance = DateDeNaissance;
+    }
+
+    /**
+     * @return the score
+     */
+    public int getScore() {
+        return score;
+    }
+
+    /**
+     * @param score the score to set
+     */
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    /**
+     * @return the IdEquipe
+     */
+    public int getIdEquipe() {
+        return IdEquipe;
+    }
+
+    /**
+     * @param IdEquipe the IdEquipe to set
+     */
+    public void setIdEquipe(int IdEquipe) {
+        this.IdEquipe = IdEquipe;
+    }
+    
+    
+    
 }
