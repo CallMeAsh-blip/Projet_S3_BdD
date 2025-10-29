@@ -5,6 +5,7 @@
 package fr.insa.ashbis.model;
 
 import fr.insa.beuvron.utils.database.ClasseMiroir;
+import fr.insa.beuvron.utils.database.ConnectionSimpleSGBD;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -32,7 +33,7 @@ public class Tournoi extends ClasseMiroir{
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
         PreparedStatement pst = con.prepareStatement(
-                "insert into joueur(nom,nbrTerrain,maxJoueurEquipe,maxEquipeTerrain,nbrEonde) values (?,?,?,?,?)",
+                "insert into tournoi(nom,nbrTerrain,maxJoueurEquipe,maxEquipeTerrain,nbrRonde) values (?,?,?,?,?)",
                 PreparedStatement.RETURN_GENERATED_KEYS
         );
         pst.setString(1, this.nom);
@@ -118,6 +119,19 @@ public class Tournoi extends ClasseMiroir{
         this.nbrRonde = nbrRonde;
     }
     
+    public static void main(String[] args) {
+        testCreer();
+    }
     
+    public static void testCreer() {
+        try {
+            Tournoi t = new Tournoi("test",20,1, 1,1);
+            System.out.println("joueur :" + t);
+            t.saveInDB(ConnectionSimpleSGBD.defaultCon());
+            System.out.println("joueur :" + t);
+        } catch (SQLException ex) {
+            throw new Error(ex);
+        }
+    }
     
 }

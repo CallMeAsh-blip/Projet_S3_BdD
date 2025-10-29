@@ -24,8 +24,9 @@ public class Joueur extends ClasseMiroir {
     private int score;
     private int idEquipe;
     private int priority;
+    private int idTournoi;
 
-    public Joueur(String prenom, String nom, String genre, String DateDeNaissance, int score, int IdEquipe, int priority) {
+    public Joueur(String prenom, String nom, String genre, String DateDeNaissance, int score, int IdEquipe, int priority, int tournoi) {
         this.prenom = prenom;
         this.nom = nom;
         this.genre = genre;
@@ -33,6 +34,7 @@ public class Joueur extends ClasseMiroir {
         this.score = score;
         this.idEquipe = IdEquipe;
         this.priority = priority;
+        this.idTournoi = tournoi;
     }
 
     
@@ -40,7 +42,7 @@ public class Joueur extends ClasseMiroir {
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
         PreparedStatement pst = con.prepareStatement(
-                "insert into joueur(prenom,nom,genre,dateDeNaissance,priority,score,idEquipe) values (?,?,?,?,?,?,?)",
+                "insert into joueur(prenom,nom,genre,dateDeNaissance,priority,score,idEquipe,idTournoi) values (?,?,?,?,?,?,?,?)",
                 PreparedStatement.RETURN_GENERATED_KEYS
         );
         pst.setString(1, this.getPrenom());
@@ -50,6 +52,7 @@ public class Joueur extends ClasseMiroir {
         pst.setInt(5, this.priority);
         pst.setInt(6, this.getScore());
         pst.setInt(7, this.getIdEquipe());
+        pst.setInt(8, this.getIdTournoi());
         pst.executeUpdate();
         return pst;
     }
@@ -57,10 +60,12 @@ public class Joueur extends ClasseMiroir {
     public String toString() {
         return ("{joueur " + this.getPrenom() + " " +this.getNom() + ":" + this.getId() + "}");
     }
-
+    
+    
+    
     public static void testCreer() {
         try {
-            Joueur j = new Joueur("test", "test","non binaire","2006-12-08",0,0,1);
+            Joueur j = new Joueur("test", "test","non binaire","2006-12-08",0,0,1,1);
             System.out.println("joueur :" + j);
             j.saveInDB(ConnectionSimpleSGBD.defaultCon());
             System.out.println("joueur :" + j);
@@ -169,6 +174,20 @@ public class Joueur extends ClasseMiroir {
      */
     public void setIdEquipe(int IdEquipe) {
         this.idEquipe = IdEquipe;
+    }
+
+    /**
+     * @return the tournoi
+     */
+    public int getIdTournoi() {
+        return idTournoi;
+    }
+
+    /**
+     * @param tournoi the tournoi to set
+     */
+    public void setIdTournoi(int tournoi) {
+        this.idTournoi = tournoi;
     }
     
     

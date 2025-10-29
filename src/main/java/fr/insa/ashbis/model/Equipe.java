@@ -5,6 +5,7 @@
 package fr.insa.ashbis.model;
 
 import fr.insa.beuvron.utils.database.ClasseMiroir;
+import fr.insa.beuvron.utils.database.ConnectionSimpleSGBD;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -18,10 +19,11 @@ public class Equipe extends ClasseMiroir {
     
     private String nom;
     private int terrain;
-
-    public Equipe(String nom, int terrain) {
+    private int idTournoi;
+    public Equipe(String nom, int terrain, int tournoi) {
         this.nom = nom;
         this.terrain = terrain;
+        this.idTournoi = tournoi;
     }
 
     
@@ -29,11 +31,12 @@ public class Equipe extends ClasseMiroir {
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
         PreparedStatement pst = con.prepareStatement(
-                "insert into joueur(nom,terrain) values (?,?)",
+                "insert into equipe(nom,idTerrain,idTournoi) values (?,?,?)",
                 PreparedStatement.RETURN_GENERATED_KEYS
         );
         pst.setString(1, this.nom);
         pst.setInt(2, this.terrain);
+        pst.setInt(3, this.idTournoi);
         pst.executeUpdate();
         return pst;
     }
@@ -45,8 +48,23 @@ public class Equipe extends ClasseMiroir {
         return nom;
     }
     
+    public static void main(String[] args) {
+        testCreerE();
+    }
+    
+    public static void testCreerE() {
+        try {
+            Equipe e = new Equipe("test", 1,1);
+            System.out.println("joueur :" + e);
+            e.saveInDB(ConnectionSimpleSGBD.defaultCon());
+            System.out.println("joueur :" + e);
+        } catch (SQLException ex) {
+            throw new Error(ex);
+        }
+    }
+    
     public String toString() {
-        return ("{equipe " + this.nom + ":" + this.getId() + "}");
+        return ("{equipe " + this.nom + ":" + this.getId() + " " + " tournoi : "+ this.getIdTournoi()+"}");
     }
     
     /**
@@ -68,6 +86,20 @@ public class Equipe extends ClasseMiroir {
      */
     public void setTerrain(int terrain) {
         this.terrain = terrain;
+    }
+
+    /**
+     * @return the tournoi
+     */
+    public int getIdTournoi() {
+        return idTournoi;
+    }
+
+    /**
+     * @param tournoi the tournoi to set
+     */
+    public void setIdTournoi(int tournoi) {
+        this.idTournoi = tournoi;
     }
     
 }

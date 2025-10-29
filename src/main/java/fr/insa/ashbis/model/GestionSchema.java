@@ -48,19 +48,22 @@ public class GestionSchema {
                         + " dateDeNaissance DATE not null,"
                         + " priority integer,"
                         + " score integer,"
-                        + " idEquipe integer"
+                        + " idEquipe integer,"
+                        + " idTournoi integer not null"
                         + ")"
                 );
                 st.executeUpdate("create table equipe ( "
                         + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
                         + " nom varchar(64) not null,"
-                        + " terrain integer"
+                        + " idTerrain integer,"
+                        + " idTournoi integer not null"
                         + ")"
                 );
                 st.executeUpdate("create table matchs ( "
                         + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
                         + " idTerrain integer not null,"
-                        + " idRonde integer"
+                        + " idTournoi integer not null,"
+                        + " idRonde integer not null"
                         + ")"
                 );
                 st.executeUpdate("create table tournoi ( "
@@ -75,9 +78,10 @@ public class GestionSchema {
                 
                 st.executeUpdate("create table ronde ( "
                         + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
-                        + " timestampDebut TIMESTAMP,"
+                        + " dateTimeDebut datetime,"
                         + " statut integer not null,"
-                        + " timestampFin TIMESTAMP"       
+                        + " idTournoi integer not null,"
+                        + " dateTimeFin datetime"       
                         + ")"
                 );
                 
