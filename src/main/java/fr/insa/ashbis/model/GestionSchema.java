@@ -88,9 +88,10 @@ public class GestionSchema {
                 st.executeUpdate("create table admin ( "
                         + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
                         + " idTournoi int,"
-                        + " username string not null,"
-                        + " password varchar(60) not null"          
-                        );
+                        + " username varchar(64) not null,"
+                        + " password varchar(64) not null"          
+                        +")"
+                );
                 
                 con.commit();
                 

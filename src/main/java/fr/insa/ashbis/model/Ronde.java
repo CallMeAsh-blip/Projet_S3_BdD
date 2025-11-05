@@ -22,7 +22,8 @@ public class Ronde extends ClasseMiroir{
     private int statut;
     private int idTournoi;
 
-    public Ronde(java.sql.Timestamp dateTimeDebut, java.sql.Timestamp dateTimeFin, int statut, int idTournoi) {
+    public Ronde( int statut, int idTournoi) {
+//        java.sql.Timestamp dateTimeDebut, java.sql.Timestamp dateTimeFin,
         this.dateTimeDebut = dateTimeDebut;
 //        ResultSet rs;
 //        java.sql.Timestamp test;
@@ -105,6 +106,6 @@ public class Ronde extends ClasseMiroir{
         this.idTournoi = idTournoi;
     }
     
-
+    
 
 }
