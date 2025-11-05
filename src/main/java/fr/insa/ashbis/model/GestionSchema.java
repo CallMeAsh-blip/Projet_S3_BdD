@@ -78,10 +78,10 @@ public class GestionSchema {
                 
                 st.executeUpdate("create table ronde ( "
                         + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
-                        + " dateTimeDebut datetime,"
+                        + " dateTimeDebut Timestamp,"
                         + " statut integer not null,"
                         + " idTournoi integer not null,"
-                        + " dateTimeFin datetime"       
+                        + " dateTimeFin Timestamp"       
                         + ")"
                 );
                 

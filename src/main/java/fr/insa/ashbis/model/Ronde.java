@@ -7,21 +7,28 @@ package fr.insa.ashbis.model;
 import fr.insa.beuvron.utils.database.ClasseMiroir;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 
 /**
  *
  * @author ashln
  */
 public class Ronde extends ClasseMiroir{
-    private int dateTimeDebut;
-    private int dateTimeFin;
+    private java.sql.Timestamp dateTimeDebut;
+    private java.sql.Timestamp dateTimeFin;
     private int statut;
     private int idTournoi;
 
-    public Ronde(int dateTimeDebut, int dateTimeFin, int statut, int idTournoi) {
+    public Ronde(java.sql.Timestamp dateTimeDebut, java.sql.Timestamp dateTimeFin, int statut, int idTournoi) {
         this.dateTimeDebut = dateTimeDebut;
+//        ResultSet rs;
+//        java.sql.Timestamp test;
+//        test.toLocalDateTime().to
+//        java.sql.Date sqd = rs.getDate(1);
+//        LocalDateTime ldd = sqd.toLocalDate();
         this.dateTimeFin = dateTimeFin;
         this.statut = statut;
         this.idTournoi = idTournoi;
@@ -33,10 +40,10 @@ public class Ronde extends ClasseMiroir{
                 "insert into matchs(dateTimeDebut,statut,idTournoi,dateTimeFin) values (?,?,?,?)",
                 PreparedStatement.RETURN_GENERATED_KEYS
         );
-        pst.setInt(1, this.dateTimeDebut);
+        pst.setTimestamp(1, this.dateTimeDebut);
         pst.setInt(2, this.statut);
         pst.setInt(3, this.idTournoi);
-        pst.setInt(4, this.dateTimeFin);
+        pst.setTimestamp(4, this.dateTimeFin);
         
         pst.executeUpdate();
         return pst;
@@ -45,28 +52,28 @@ public class Ronde extends ClasseMiroir{
     /**
      * @return the dateTimeDebut
      */
-    public int getDateTimeDebut() {
+    public java.sql.Timestamp getDateTimeDebut() {
         return dateTimeDebut;
     }
 
     /**
      * @param dateTimeDebut the dateTimeDebut to set
      */
-    public void setDateTimeDebut(int dateTimeDebut) {
+    public void setDateTimeDebut(java.sql.Timestamp dateTimeDebut) {
         this.dateTimeDebut = dateTimeDebut;
     }
 
     /**
      * @return the dateTimeFin
      */
-    public int getDateTimeFin() {
+    public java.sql.Timestamp getDateTimeFin() {
         return dateTimeFin;
     }
 
     /**
      * @param dateTimeFin the dateTimeFin to set
      */
-    public void setDateTimeFin(int dateTimeFin) {
+    public void setDateTimeFin(java.sql.Timestamp dateTimeFin) {
         this.dateTimeFin = dateTimeFin;
     }
 
