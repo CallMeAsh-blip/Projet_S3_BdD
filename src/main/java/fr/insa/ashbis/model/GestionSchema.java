@@ -85,6 +85,13 @@ public class GestionSchema {
                         + ")"
                 );
                 
+                st.executeUpdate("create table admin ( "
+                        + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
+                        + " idTournoi int,"
+                        + " username string not null,"
+                        + " password varchar(60) not null"          
+                        );
+                
                 con.commit();
                 
             }
@@ -111,6 +118,7 @@ public class GestionSchema {
                 st.executeUpdate("drop table tournoi");
                 st.executeUpdate("drop table ronde");
                 st.executeUpdate("drop table matchs");
+                st.executeUpdate("drop table admin");
             } catch (SQLException ex) {
             }
         }
