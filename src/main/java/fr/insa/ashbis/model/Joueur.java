@@ -48,7 +48,7 @@ public class Joueur extends ClasseMiroir {
         pst.setString(1, this.getPrenom());
         pst.setString(2, this.getNom());
         pst.setString(3, this.getGenre());
-        pst.setString(4, this.getDateDeNaissance());
+        pst.setDate(4, java.sql.Date.valueOf(this.dateDeNaissance));
         pst.setInt(5, this.priority);
         pst.setInt(6, this.getScore());
         pst.setInt(7, this.getIdEquipe());
