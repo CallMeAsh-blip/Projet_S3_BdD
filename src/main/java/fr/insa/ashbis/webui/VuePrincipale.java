@@ -18,23 +18,42 @@ along with CoursBeuvron.  If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.insa.ashbis.webui;
 
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import fr.insa.beuvron.utils.database.ConnectionPool;
+import fr.insa.beuvron.vaadin.utils.dataGrid.ResultSetGrid;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 /**
  *
  * @author francois
  */
 @Route(value = "")
-@PageTitle("Likes")
+@PageTitle("test")
 public class VuePrincipale extends VerticalLayout {
 
     public VuePrincipale() {
-        this.add(new H2("TODO"));
+        this.add(new H2("Bienvenue dans Likes"));
+        this.add(new Paragraph("Une superbe application"));
+
+        try (Connection con = ConnectionPool.getConnection()) {
+            PreparedStatement pst = con.prepareStatement(
+                    "SELECT * FROM joueur"
+            );
+
+            // Affiche automatiquement les colonnes de la table joueur
+            this.add(new ResultSetGrid(pst));
+
+        } catch (SQLException ex) {
+            Notification.show("Problème : " + ex.getLocalizedMessage());
+        }
     }
 
 }
+
