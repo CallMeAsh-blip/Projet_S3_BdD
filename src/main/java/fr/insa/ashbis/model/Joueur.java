@@ -25,6 +25,7 @@ public class Joueur extends ClasseMiroir {
     private int idEquipe;
     private int priority;
     private int idTournoi;
+    private int id;
 
     public Joueur(String prenom, String nom, String genre, String DateDeNaissance, int score, int IdEquipe, int priority, int tournoi) {
         this.prenom = prenom;
@@ -35,6 +36,7 @@ public class Joueur extends ClasseMiroir {
         this.idEquipe = IdEquipe;
         this.priority = priority;
         this.idTournoi = tournoi;
+
     }
 
     
@@ -75,13 +77,13 @@ public class Joueur extends ClasseMiroir {
     }
     public void resetPriority(){
         if(this.priority==1){
-            priority=0;
+            setPriority(0);
         }
     }
     
     public void setPriority(){
         if(this.priority==0){
-            priority=1;
+            setPriority(1);
         }
     }
     public static void main(String[] args) {
@@ -188,6 +190,21 @@ public class Joueur extends ClasseMiroir {
      */
     public void setIdTournoi(int tournoi) {
         this.idTournoi = tournoi;
+    }
+
+    /**
+     * @return the tournoi
+     */
+    public int getId() {
+        return id;
+    }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(int id) {
+        this.id = id;
     }
     
     
