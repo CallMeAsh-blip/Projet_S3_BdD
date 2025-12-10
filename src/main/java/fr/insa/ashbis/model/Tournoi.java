@@ -22,6 +22,7 @@ public class Tournoi extends ClasseMiroir{
     private int maxEquipeTerrain;
     private int nbrRonde;
     private int idAdmin;
+    private int id
 
     public Tournoi(String nom, int nbrTerrain, int maxJoueurEquipe, int maxEquipeTerrain, int nbrRonde, int idAdmin) {
         this.nom = nom;
@@ -57,6 +58,10 @@ public class Tournoi extends ClasseMiroir{
      */
     public String getNom() {
         return nom;
+    }
+    
+    public void setId(int id){
+        this.id=id;
     }
 
     /**
