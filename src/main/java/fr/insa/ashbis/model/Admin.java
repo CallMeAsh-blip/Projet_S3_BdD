@@ -16,19 +16,16 @@ import java.sql.Statement;
  */
 public class Admin extends ClasseMiroir {
     private String password;
-    private int idTournoi;
     private String username;
     
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
         PreparedStatement pst = con.prepareStatement(
-                "insert into joueur(idTournoi,username,password) values (?,?,?)",
+                "insert into joueur(username,password) values (?,?,?)",
                 PreparedStatement.RETURN_GENERATED_KEYS
         );
-        pst.setString(2, this.username);
-        pst.setString(3, this.password);
-
-        pst.setInt(1, this.idTournoi);
+        pst.setString(1, this.username);
+        pst.setString(2, this.password);
         pst.executeUpdate();
         return pst;
     }
@@ -47,19 +44,6 @@ public class Admin extends ClasseMiroir {
         this.password = password;
     }
 
-    /**
-     * @return the idTournoi
-     */
-    public int getIdTournoi() {
-        return idTournoi;
-    }
-
-    /**
-     * @param idTournoi the idTournoi to set
-     */
-    public void setIdTournoi(int idTournoi) {
-        this.idTournoi = idTournoi;
-    }
 
     /**
      * @return the username

@@ -69,6 +69,7 @@ public class GestionSchema {
                 st.executeUpdate("create table tournoi ( "
                         + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
                         + " nom varchar(64) not null,"
+                        + " idAdmin int,"
                         + " nbrTerrain integer not null,"
                         + " maxJoueurEquipe integer not null,"
                         + " maxEquipeTerrain integer not null,"
@@ -87,7 +88,6 @@ public class GestionSchema {
                 
                 st.executeUpdate("create table admin ( "
                         + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
-                        + " idTournoi int,"
                         + " username varchar(64) not null,"
                         + " password varchar(64) not null"          
                         +")"

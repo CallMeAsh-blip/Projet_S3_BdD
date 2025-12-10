@@ -21,26 +21,29 @@ public class Tournoi extends ClasseMiroir{
     private int maxJoueurEquipe;
     private int maxEquipeTerrain;
     private int nbrRonde;
+    private int idAdmin;
 
-    public Tournoi(String nom, int nbrTerrain, int maxJoueurEquipe, int maxEquipeTerrain, int nbrRonde) {
+    public Tournoi(String nom, int nbrTerrain, int maxJoueurEquipe, int maxEquipeTerrain, int nbrRonde, int idAdmin) {
         this.nom = nom;
         this.nbrTerrain = nbrTerrain;
         this.maxJoueurEquipe = maxJoueurEquipe;
         this.maxEquipeTerrain = maxEquipeTerrain;
         this.nbrRonde = nbrRonde;
+        this.idAdmin = idAdmin;
     }
     
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
         PreparedStatement pst = con.prepareStatement(
-                "insert into tournoi(nom,nbrTerrain,maxJoueurEquipe,maxEquipeTerrain,nbrRonde) values (?,?,?,?,?)",
+                "insert into tournoi(nom,idAdmin,nbrTerrain,maxJoueurEquipe,maxEquipeTerrain,nbrRonde) values (?,?,?,?,?,?)",
                 PreparedStatement.RETURN_GENERATED_KEYS
         );
         pst.setString(1, this.nom);
-        pst.setInt(2, this.nbrTerrain);
-        pst.setInt(3, this.maxJoueurEquipe);
-        pst.setInt(4, this.maxEquipeTerrain);
-        pst.setInt(5, this.nbrRonde);
+        pst.setInt(3, this.nbrTerrain);
+        pst.setInt(4, this.maxJoueurEquipe);
+        pst.setInt(5, this.maxEquipeTerrain);
+        pst.setInt(6, this.nbrRonde);
+        pst.setInt(2, this.getIdAdmin());
 
         pst.executeUpdate();
         return pst;
@@ -123,9 +126,11 @@ public class Tournoi extends ClasseMiroir{
         testCreer();
     }
     
+    
+    
     public static void testCreer() {
         try {
-            Tournoi t = new Tournoi("test",20,1, 1,1);
+            Tournoi t = new Tournoi("test",1,1, 1,1,1);
             System.out.println("joueur :" + t);
             t.saveInDB(ConnectionSimpleSGBD.defaultCon());
             System.out.println("joueur :" + t);
@@ -133,5 +138,20 @@ public class Tournoi extends ClasseMiroir{
             throw new Error(ex);
         }
     }
+
+    /**
+     * @return the idAdmin
+     */
+    public int getIdAdmin() {
+        return idAdmin;
+    }
+
+    /**
+     * @param idAdmin the idAdmin to set
+     */
+    public void setIdAdmin(int idAdmin) {
+        this.idAdmin = idAdmin;
+    }
+    
     
 }
