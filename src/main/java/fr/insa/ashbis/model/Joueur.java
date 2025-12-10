@@ -77,13 +77,13 @@ public class Joueur extends ClasseMiroir {
     }
     public void resetPriority(){
         if(this.priority==1){
-            setPriority(0);
+            this.priority=0;
         }
     }
     
     public void setPriority(){
         if(this.priority==0){
-            setPriority(1);
+            this.priority=1;
         }
     }
     public static void main(String[] args) {
