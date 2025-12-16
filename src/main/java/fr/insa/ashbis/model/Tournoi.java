@@ -8,8 +8,11 @@ import fr.insa.beuvron.utils.database.ClasseMiroir;
 import fr.insa.beuvron.utils.database.ConnectionSimpleSGBD;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -22,9 +25,18 @@ public class Tournoi extends ClasseMiroir{
     private int maxEquipeTerrain;
     private int nbrRonde;
     private int idAdmin;
-    private int id;
 
-    public Tournoi(String nom, int nbrTerrain, int maxJoueurEquipe, int maxEquipeTerrain, int nbrRonde, int idAdmin) {
+    public Tournoi(String nom, int idAdmin, int nbrTerrain, int maxJoueurEquipe, int maxEquipeTerrain, int nbrRonde) {
+        this.nom = nom;
+        this.nbrTerrain = nbrTerrain;
+        this.maxJoueurEquipe = maxJoueurEquipe;
+        this.maxEquipeTerrain = maxEquipeTerrain;
+        this.nbrRonde = nbrRonde;
+        this.idAdmin = idAdmin;
+    }
+
+    public Tournoi( int id,String nom, int idAdmin, int nbrTerrain, int maxJoueurEquipe, int maxEquipeTerrain, int nbrRonde) {
+        super(id);
         this.nom = nom;
         this.nbrTerrain = nbrTerrain;
         this.maxJoueurEquipe = maxJoueurEquipe;
@@ -33,6 +45,8 @@ public class Tournoi extends ClasseMiroir{
         this.idAdmin = idAdmin;
     }
     
+    
+    
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
         PreparedStatement pst = con.prepareStatement(
@@ -40,11 +54,12 @@ public class Tournoi extends ClasseMiroir{
                 PreparedStatement.RETURN_GENERATED_KEYS
         );
         pst.setString(1, this.nom);
+        pst.setInt(2, this.idAdmin);       
         pst.setInt(3, this.nbrTerrain);
         pst.setInt(4, this.maxJoueurEquipe);
         pst.setInt(5, this.maxEquipeTerrain);
         pst.setInt(6, this.nbrRonde);
-        pst.setInt(2, this.getIdAdmin());
+
 
         pst.executeUpdate();
         return pst;
@@ -60,10 +75,22 @@ public class Tournoi extends ClasseMiroir{
         return nom;
     }
     
-    public void setId(int id){
-        this.id=id;
-    }
 
+    
+    public static List<Tournoi> AllTournois(Connection con) throws SQLException {
+        List<Tournoi> res = new ArrayList<>();
+        try (PreparedStatement pst = con.prepareStatement("select id,nom,idAdmin,nbrTerrain,maxJoueurEquipe,maxEquipeTerrain,nbrRonde from tournoi")) {
+            try (ResultSet allU = pst.executeQuery()) {
+                while (allU.next()) {
+                    res.add(new Tournoi(allU.getInt("id"), allU.getString("nom"),allU.getInt("idAdmin"),
+                            allU.getInt("nbrTerrain"),allU.getInt("maxJoueurEquipe"),
+                            allU.getInt("maxEquipeTerrain"),allU.getInt("nbrRonde")));
+                }
+            }
+        }
+        return res;
+    }
+    
     /**
      * @param nom the nom to set
      */
@@ -151,12 +178,6 @@ public class Tournoi extends ClasseMiroir{
         return idAdmin;
     }
 
-    /**
-     * @param idAdmin the idAdmin to set
-     */
-    public void setIdAdmin(int idAdmin) {
-        this.idAdmin = idAdmin;
-    }
     
     
 }

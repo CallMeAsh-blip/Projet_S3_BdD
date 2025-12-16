@@ -16,18 +16,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with CoursBeuvron.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.insa.ashbis.webui;
+package fr.insa.ashbis.webui.utilisateurs;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import fr.insa.ashbis.model.Tournoi;
+import fr.insa.ashbis.model.Admin;
+import fr.insa.ashbis.webui.MainLayout;
 import fr.insa.beuvron.utils.database.ConnectionPool;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -36,32 +35,37 @@ import java.sql.SQLException;
  *
  * @author francois
  */
-@Route(value = "", layout = MainLayout.class)
+@Route(value = "utilisateurs/creationAdmin",layout = MainLayout.class)
 @PageTitle("Likes")
-public class VuePrincipale extends VerticalLayout {
+public class CreationAdmin extends FormLayout {
 
-    public VuePrincipale() {
-        this.add(new H2("Bienvenu dans Likes"));
-        this.add(new Paragraph("une superbe application"));
-        Grid<Tournoi> grid = new Grid<>();
-        grid.addColumn(Tournoi::getNom).setHeader("nom du tournoi");
-        grid.addColumn(Tournoi::getMaxJoueurEquipe).setHeader("joueur par équipe");
-        grid.addColumn(Tournoi::getNbrTerrain).setHeader("terrains");
-        grid.addColumn(new ComponentRenderer<>(tournoi -> {
-            Button btn = new Button("Voir");
-            btn.addClickListener(e -> {
-                Notification.show("Tournoi : " + tournoi.getNom());
-            });
-            return btn;
-        })).setHeader("Action");
+    private TextField username;
+    private PasswordField password;
+    private Button save;
+    
+    public CreationAdmin() {
+        this.username = new TextField("username");
+        this.password = new PasswordField("password");
+        this.save = new Button("save");
+        this.save.addClickListener((t) -> {
+            this.doSave();
+        });
 
+        this.setAutoResponsive(true);
+        this.addFormRow(this.username,this.password);
+        this.addFormRow(this.save);
+    }
+    
+    public void doSave() {
         try (Connection con = ConnectionPool.getConnection()) {
-            grid.setItems(Tournoi.AllTournois(con));
+            String username = this.username.getValue();
+            String pass = this.password.getValue();
+            Admin u = new Admin(pass, username);
+            u.saveInDB(con);  
+            Notification.show("utilisateur "+ username + " créé");
         } catch (SQLException ex) {
             Notification.show("Problème : " + ex.getLocalizedMessage());
         }
-        this.add(grid);
-       
     }
 
 }

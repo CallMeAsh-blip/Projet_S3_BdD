@@ -16,12 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with CoursBeuvron.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.insa.ashbis.webui;
+package fr.insa.ashbis.webui.utilisateurs;
 
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -29,6 +28,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import fr.insa.ashbis.model.Tournoi;
 import fr.insa.beuvron.utils.database.ConnectionPool;
+import fr.insa.ashbis.webui.MainLayout;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -36,32 +36,22 @@ import java.sql.SQLException;
  *
  * @author francois
  */
-@Route(value = "", layout = MainLayout.class)
+@Route(value = "utilisateurs/liste",layout = MainLayout.class)
 @PageTitle("Likes")
-public class VuePrincipale extends VerticalLayout {
+public class ListeUtilisateurs extends VerticalLayout {
 
-    public VuePrincipale() {
-        this.add(new H2("Bienvenu dans Likes"));
-        this.add(new Paragraph("une superbe application"));
+    public ListeUtilisateurs() {
+        this.add(new H2("Liste de tous les utilisateurs"));
         Grid<Tournoi> grid = new Grid<>();
         grid.addColumn(Tournoi::getNom).setHeader("nom du tournoi");
         grid.addColumn(Tournoi::getMaxJoueurEquipe).setHeader("joueur par équipe");
         grid.addColumn(Tournoi::getNbrTerrain).setHeader("terrains");
-        grid.addColumn(new ComponentRenderer<>(tournoi -> {
-            Button btn = new Button("Voir");
-            btn.addClickListener(e -> {
-                Notification.show("Tournoi : " + tournoi.getNom());
-            });
-            return btn;
-        })).setHeader("Action");
-
         try (Connection con = ConnectionPool.getConnection()) {
             grid.setItems(Tournoi.AllTournois(con));
         } catch (SQLException ex) {
             Notification.show("Problème : " + ex.getLocalizedMessage());
         }
         this.add(grid);
-       
     }
 
 }
