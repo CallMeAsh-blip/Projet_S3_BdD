@@ -16,9 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with CoursBeuvron.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.insa.ashbis.webui;
+package fr.insa.ashbis.webui.layout;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import fr.insa.ashbis.webui.menu.MainMenu;
 import fr.insa.ashbis.webui.session.LoginEntete;
 import fr.insa.ashbis.webui.session.LogoutEntete;
 import fr.insa.ashbis.webui.session.SessionInfo;

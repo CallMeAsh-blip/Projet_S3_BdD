@@ -8,8 +8,11 @@ import fr.insa.beuvron.utils.database.ClasseMiroir;
 import fr.insa.beuvron.utils.database.ConnectionSimpleSGBD;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -207,6 +210,32 @@ public class Joueur extends ClasseMiroir {
         this.id = id;
     }
     
-    
+
+
+    public static List<Joueur> allJoueursByTournoi(Connection con, int idTournoi) throws SQLException {
+        List<Joueur> joueurs = new ArrayList<>();
+        String sql = "SELECT id, prenom, nom, genre, dateDeNaissance, score, idEquipe, priority, idTournoi FROM joueur WHERE idTournoi = ?";
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, idTournoi);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    Joueur j = new Joueur(
+                            rs.getString("prenom"),
+                            rs.getString("nom"),
+                            rs.getString("genre"),
+                            rs.getDate("dateDeNaissance").toString(),
+                            rs.getInt("score"),
+                            rs.getInt("idEquipe"),
+                            rs.getInt("priority"),
+                            rs.getInt("idTournoi")
+                        );
+                    j.setId(rs.getInt("id"));
+                    joueurs.add(j);
+                }
+            }
+        }
+        return joueurs;
+    }
+
     
 }

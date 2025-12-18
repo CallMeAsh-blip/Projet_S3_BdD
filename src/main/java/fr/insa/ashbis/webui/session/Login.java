@@ -13,7 +13,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import fr.insa.ashbis.model.Admin;
-import fr.insa.ashbis.webui.MainLayout;
+import fr.insa.ashbis.webui.layout.MainLayout;
 import fr.insa.beuvron.utils.database.ConnectionPool;
 import java.sql.Connection;
 import java.sql.SQLException;

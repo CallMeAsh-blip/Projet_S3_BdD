@@ -4,6 +4,7 @@
  */
 package fr.insa.ashbis.webui.session;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
@@ -12,10 +13,11 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import fr.insa.ashbis.model.Admin;
-import fr.insa.ashbis.webui.MainLayout;
+import fr.insa.ashbis.webui.layout.MainLayout;
 import fr.insa.beuvron.utils.database.ConnectionPool;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Optional;
 
 /**
  *
@@ -67,7 +69,13 @@ public class SignIn extends FormLayout {
 
             this.username.clear();
             this.password.clear();
-        
+            Optional<Admin> trouve = Admin.findBySurnomPass(con, username, pass);
+            if (trouve.isEmpty()) {
+                Notification.show("Erreur lors de la connection");
+            } else {
+                SessionInfo.login(trouve.get());
+                UI.getCurrent().refreshCurrentRoute(true);
+            }
         } catch (SQLException ex) {
          Notification.show("Erreur BD : " + ex.getMessage());
         }

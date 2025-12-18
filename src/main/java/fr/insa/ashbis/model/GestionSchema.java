@@ -74,7 +74,9 @@ public class GestionSchema {
                         + " maxJoueurEquipe integer not null,"
                         + " maxEquipeTerrain integer not null,"
                         + " nbrRonde integer not null," 
-                        + " minJoueurEquipe integer not null"
+                        + " minJoueurEquipe integer not null,"
+                        + " randomizationTeam integer not null,"
+                        + " inscriptionlibre integer not null"
                         + ")"
                 );
                 

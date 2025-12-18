@@ -16,29 +16,28 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with CoursBeuvron.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.insa.ashbis.webui;
-
-import com.vaadin.flow.component.sidenav.SideNav;
-import com.vaadin.flow.component.sidenav.SideNavItem;
+package fr.insa.ashbis.webui.layout;
+import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.applayout.DrawerToggle;
+import fr.insa.ashbis.webui.menu.MainMenu;
+import fr.insa.ashbis.webui.session.LoginEntete;
+import fr.insa.ashbis.webui.session.LogoutEntete;
 import fr.insa.ashbis.webui.session.SessionInfo;
-
-import fr.insa.ashbis.webui.utilisateurs.CreerTournoi;
-import fr.insa.ashbis.webui.utilisateurs.VueCompteAdmin;
-
 
 /**
  *
  * @author francois
  */
-public class MainMenu extends SideNav{
+public class MainLayout extends AppLayout{
     
-    public MainMenu() {
-        SideNavItem accueil = new SideNavItem("accueil",VuePrincipale.class);
-        SideNavItem creerTournoi = new SideNavItem("Créer Tournoi",CreerTournoi.class);
-        SideNavItem VueCompte = new SideNavItem("Mon compte",VueCompteAdmin.class);
-        this.addItem(accueil,creerTournoi);
+    public MainLayout() {
+        this.addToDrawer(new MainMenu());
+        DrawerToggle toggle = new DrawerToggle();
+        this.addToNavbar(toggle);
         if (SessionInfo.userConnected()) {
-            this.addItem(VueCompte);
+            this.addToNavbar(new LogoutEntete());
+        } else {
+            this.addToNavbar(new LoginEntete());
         }
     }
     

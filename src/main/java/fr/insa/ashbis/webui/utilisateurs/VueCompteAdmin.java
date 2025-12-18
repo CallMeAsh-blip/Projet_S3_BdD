@@ -6,16 +6,18 @@ package fr.insa.ashbis.webui.utilisateurs;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import fr.insa.ashbis.model.Admin;
 import fr.insa.ashbis.model.Tournoi;
-import fr.insa.ashbis.webui.MainLayout;
+import fr.insa.ashbis.webui.layout.MainLayout;
 import fr.insa.ashbis.webui.session.SessionInfo;
 import fr.insa.beuvron.utils.database.ConnectionPool;
 
@@ -31,7 +33,7 @@ public class VueCompteAdmin extends VerticalLayout {
 
         Optional<Admin> optAdmin = SessionInfo.curUser();
 
-        // 🔐 Sécurité
+
         if (optAdmin.isEmpty()) {
             Notification.show("Veuillez vous connecter");
             UI.getCurrent().navigate("");
@@ -40,7 +42,7 @@ public class VueCompteAdmin extends VerticalLayout {
 
         Admin admin = optAdmin.get();
 
-        add(new H2("Compte administrateur"));
+        add(new H2("Votre compte"));
         add(new Paragraph("Nom d'utilisateur : " + admin.getUsername()));
 
         Grid<Tournoi> grid = new Grid<>();
@@ -49,12 +51,43 @@ public class VueCompteAdmin extends VerticalLayout {
         grid.addColumn(Tournoi::getMaxJoueurEquipe).setHeader("Joueurs / équipe");
 
         grid.addComponentColumn(t -> {
-            Button btn = new Button("Gérer");
-            btn.addClickListener(e ->
-                UI.getCurrent().navigate("tournoi/" + t.getId())
-            );
-            return btn;
-        }).setHeader("Action");
+
+        Button gerer = new Button("Gérer");
+        gerer.addClickListener(e ->
+            UI.getCurrent().navigate("tournoi/" + t.getId())
+        );
+
+        Button supprimer = new Button("Supprimer");
+        supprimer.getStyle().set("color", "red");
+
+        supprimer.addClickListener(e -> {
+            ConfirmDialog dialog = new ConfirmDialog();
+            dialog.setHeader("Confirmation");
+            dialog.setText("Supprimer le tournoi \"" + t.getNom() + "\" ?");
+
+            dialog.setCancelable(true);
+            dialog.setConfirmText("Supprimer");
+            dialog.setConfirmButtonTheme("error primary");
+
+            dialog.addConfirmListener(ev -> {
+                try (Connection con = ConnectionPool.getConnection()) {
+                    t.deleteInDB(con);
+                    grid.setItems(
+                        Tournoi.allTournoisByAdmin(con, admin.getId())
+                    );
+                    Notification.show("Tournoi supprimé");
+                } catch (SQLException ex) {
+                    Notification.show("Erreur suppression : " + ex.getMessage());
+                }
+            });
+
+            dialog.open();
+        });
+
+        return new HorizontalLayout(gerer, supprimer);
+
+    }).setHeader("Actions");
+
 
         try (Connection con = ConnectionPool.getConnection()) {
             grid.setItems(Tournoi.allTournoisByAdmin(con, admin.getId()));
