@@ -20,8 +20,10 @@ package fr.insa.ashbis.webui;
 
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
-import fr.insa.ashbis.webui.utilisateurs.CreationAdmin;
-import fr.insa.ashbis.webui.utilisateurs.ListeUtilisateurs;
+import fr.insa.ashbis.webui.session.SessionInfo;
+
+import fr.insa.ashbis.webui.utilisateurs.CreerTournoi;
+import fr.insa.ashbis.webui.utilisateurs.VueCompteAdmin;
 
 
 /**
@@ -32,12 +34,12 @@ public class MainMenu extends SideNav{
     
     public MainMenu() {
         SideNavItem accueil = new SideNavItem("accueil",VuePrincipale.class);
-        SideNavItem utilisateurs = new SideNavItem("utilisateurs");
-        SideNavItem listeUtilisateurs = new SideNavItem("liste",ListeUtilisateurs.class);
-        SideNavItem creationAdmin = new SideNavItem("creation(admin)",CreationAdmin.class);
-        utilisateurs.addItem(listeUtilisateurs);
-        utilisateurs.addItem(creationAdmin);
-        this.addItem(accueil,utilisateurs);
+        SideNavItem creerTournoi = new SideNavItem("Créer Tournoi",CreerTournoi.class);
+        SideNavItem VueCompte = new SideNavItem("Mon compte",VueCompteAdmin.class);
+        this.addItem(accueil,creerTournoi);
+        if (SessionInfo.userConnected()) {
+            this.addItem(VueCompte);
+        }
     }
     
 }

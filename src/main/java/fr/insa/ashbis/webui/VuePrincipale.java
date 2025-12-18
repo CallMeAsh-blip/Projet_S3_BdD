@@ -18,6 +18,7 @@ along with CoursBeuvron.  If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.insa.ashbis.webui;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
@@ -41,7 +42,7 @@ import java.sql.SQLException;
 public class VuePrincipale extends VerticalLayout {
 
     public VuePrincipale() {
-        this.add(new H2("Bienvenu dans Likes"));
+        this.add(new H2("Bienvenue sur votre site de gestion de tournoi"));
         this.add(new Paragraph("une superbe application"));
         Grid<Tournoi> grid = new Grid<>();
         grid.addColumn(Tournoi::getNom).setHeader("nom du tournoi");
@@ -49,9 +50,9 @@ public class VuePrincipale extends VerticalLayout {
         grid.addColumn(Tournoi::getNbrTerrain).setHeader("terrains");
         grid.addColumn(new ComponentRenderer<>(tournoi -> {
             Button btn = new Button("Voir");
-            btn.addClickListener(e -> {
-                Notification.show("Tournoi : " + tournoi.getNom());
-            });
+            btn.addClickListener(e -> 
+                UI.getCurrent().navigate("tournoi/" + tournoi.getId())
+            );
             return btn;
         })).setHeader("Action");
 

@@ -36,34 +36,19 @@ import java.util.Optional;
  */
 public class LoginEntete extends HorizontalLayout {
 
-    public TextField surnom;
-    public PasswordField pass;
     public Button login;
-
+    public Button signin;
+    
     public LoginEntete() {
-        this.surnom = new TextField("surnom : ");
-        this.pass = new PasswordField("pass : ");
-        this.login = new Button("login");
+        this.login = new Button("Se connecter");
         this.login.addClickListener((t) -> {
-            this.doLogin();
+            UI.getCurrent().navigate("Connection");
         });
-        this.add(this.surnom, this.pass, this.login);
-    }
-
-    public void doLogin() {
-        String surnom = this.surnom.getValue();
-        String pass = this.pass.getValue();
-        try (Connection con = ConnectionPool.getConnection()) {
-            Optional<Admin> trouve = Admin.findBySurnomPass(con, surnom, pass);
-            if (trouve.isEmpty()) {
-                Notification.show("Surnom ou pass incorrect");
-            } else {
-                SessionInfo.login(trouve.get());
-                UI.getCurrent().refreshCurrentRoute(true);
-            }
-        } catch (SQLException ex) {
-            Notification.show("Problème "+ex.getLocalizedMessage());
-        }
+        this.signin = new Button("Créer un compte");
+        this.signin.addClickListener((t) -> {
+            UI.getCurrent().navigate("CreationCompte");
+        });
+        this.add(this.signin, this.login);
     }
 
 }

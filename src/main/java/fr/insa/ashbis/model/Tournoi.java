@@ -22,20 +22,22 @@ public class Tournoi extends ClasseMiroir{
     private String nom;
     private int nbrTerrain;
     private int maxJoueurEquipe;
+    private int minJoueurEquipe;
     private int maxEquipeTerrain;
     private int nbrRonde;
     private int idAdmin;
 
-    public Tournoi(String nom, int idAdmin, int nbrTerrain, int maxJoueurEquipe, int maxEquipeTerrain, int nbrRonde) {
+    public Tournoi(String nom, int idAdmin, int nbrTerrain, int maxJoueurEquipe, int maxEquipeTerrain, int nbrRonde, int minJoueurEquipe) {
         this.nom = nom;
         this.nbrTerrain = nbrTerrain;
         this.maxJoueurEquipe = maxJoueurEquipe;
         this.maxEquipeTerrain = maxEquipeTerrain;
         this.nbrRonde = nbrRonde;
         this.idAdmin = idAdmin;
+        this.minJoueurEquipe=minJoueurEquipe;
     }
 
-    public Tournoi( int id,String nom, int idAdmin, int nbrTerrain, int maxJoueurEquipe, int maxEquipeTerrain, int nbrRonde) {
+    public Tournoi( int id,String nom, int idAdmin, int nbrTerrain, int maxJoueurEquipe, int maxEquipeTerrain, int nbrRonde, int minJoueurEquipe) {
         super(id);
         this.nom = nom;
         this.nbrTerrain = nbrTerrain;
@@ -43,6 +45,7 @@ public class Tournoi extends ClasseMiroir{
         this.maxEquipeTerrain = maxEquipeTerrain;
         this.nbrRonde = nbrRonde;
         this.idAdmin = idAdmin;
+        this.minJoueurEquipe = minJoueurEquipe;
     }
     
     
@@ -50,7 +53,7 @@ public class Tournoi extends ClasseMiroir{
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
         PreparedStatement pst = con.prepareStatement(
-                "insert into tournoi(nom,idAdmin,nbrTerrain,maxJoueurEquipe,maxEquipeTerrain,nbrRonde) values (?,?,?,?,?,?)",
+                "insert into tournoi(nom,idAdmin,nbrTerrain,maxJoueurEquipe,maxEquipeTerrain,nbrRonde) values (?,?,?,?,?,?,?)",
                 PreparedStatement.RETURN_GENERATED_KEYS
         );
         pst.setString(1, this.nom);
@@ -59,6 +62,7 @@ public class Tournoi extends ClasseMiroir{
         pst.setInt(4, this.maxJoueurEquipe);
         pst.setInt(5, this.maxEquipeTerrain);
         pst.setInt(6, this.nbrRonde);
+        pst.setInt(7, this.minJoueurEquipe);
 
 
         pst.executeUpdate();
@@ -79,12 +83,12 @@ public class Tournoi extends ClasseMiroir{
     
     public static List<Tournoi> AllTournois(Connection con) throws SQLException {
         List<Tournoi> res = new ArrayList<>();
-        try (PreparedStatement pst = con.prepareStatement("select id,nom,idAdmin,nbrTerrain,maxJoueurEquipe,maxEquipeTerrain,nbrRonde from tournoi")) {
+        try (PreparedStatement pst = con.prepareStatement("select id,nom,idAdmin,nbrTerrain,maxJoueurEquipe,maxEquipeTerrain,nbrRonde,minJoueurEquipe from tournoi")) {
             try (ResultSet allU = pst.executeQuery()) {
                 while (allU.next()) {
                     res.add(new Tournoi(allU.getInt("id"), allU.getString("nom"),allU.getInt("idAdmin"),
                             allU.getInt("nbrTerrain"),allU.getInt("maxJoueurEquipe"),
-                            allU.getInt("maxEquipeTerrain"),allU.getInt("nbrRonde")));
+                            allU.getInt("maxEquipeTerrain"),allU.getInt("nbrRonde"),allU.getInt("minJoueurEquipe")));
                 }
             }
         }
@@ -162,7 +166,7 @@ public class Tournoi extends ClasseMiroir{
     
     public static void testCreer() {
         try {
-            Tournoi t = new Tournoi("test",1,1, 1,1,1);
+            Tournoi t = new Tournoi("test",1,1, 1,1,1,1);
             System.out.println("joueur :" + t);
             t.saveInDB(ConnectionSimpleSGBD.defaultCon());
             System.out.println("joueur :" + t);
@@ -177,6 +181,32 @@ public class Tournoi extends ClasseMiroir{
     public int getIdAdmin() {
         return idAdmin;
     }
+    
+    public static List<Tournoi> allTournoisByAdmin(Connection con, int idAdmin) throws SQLException {
+        List<Tournoi> res = new ArrayList<>();
+
+        try (PreparedStatement pst = con.prepareStatement(
+                "SELECT id, nom, idAdmin, nbrTerrain, maxJoueurEquipe, maxEquipeTerrain, nbrRonde, minJoueurEquipe " +
+                "FROM tournoi WHERE idAdmin = ?")) {
+            pst.setInt(1, idAdmin);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    res.add(new Tournoi(
+                        rs.getInt("id"),
+                        rs.getString("nom"),
+                        rs.getInt("idAdmin"),
+                        rs.getInt("nbrTerrain"),
+                        rs.getInt("maxJoueurEquipe"),
+                        rs.getInt("maxEquipeTerrain"),
+                        rs.getInt("nbrRonde"),
+                        rs.getInt("minJoueurEquipe")
+                    ));
+                }
+            }
+        }
+        return res;
+    }
+
 
     
     

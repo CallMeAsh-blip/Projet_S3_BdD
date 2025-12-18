@@ -91,5 +91,14 @@ public class Admin extends ClasseMiroir {
         }
     }
     
+    public static boolean usernameExiste(Connection con, String username) throws SQLException {
+        try (PreparedStatement pst = con.prepareStatement(
+                "SELECT 1 FROM admin WHERE username = ?")) {
+            pst.setString(1, username);
+            ResultSet rs = pst.executeQuery();
+            return rs.next();
+        }
+    }
+
     
 }

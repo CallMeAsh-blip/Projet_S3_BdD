@@ -12,7 +12,6 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
     public static void main(String[] args) {
-        // seulement si bdd h2 en memoire
         
         SpringApplication.run(Application.class, args);
     }
