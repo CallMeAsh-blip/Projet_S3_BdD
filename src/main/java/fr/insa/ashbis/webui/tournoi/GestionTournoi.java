@@ -76,24 +76,32 @@ public class GestionTournoi extends VerticalLayout
     add(new H2("Lancer une nouvelle ronde"));
     
     Button lancer = new Button("Lancer la ronde");
-    lancer.addClickListener(e -> {
-        try (Connection con = ConnectionPool.getConnection()) {
-            fermerDerniereRondeSiTempsDepasse();
-            // Récupérer la dernière ronde du tournoi
-            Ronde derniereRonde = Ronde.findDerniereRondeByTournoi(con, idTournoi);
+lancer.addClickListener(e -> {
+    try (Connection con = ConnectionPool.getConnection()) {
 
-            if (derniereRonde == null || derniereRonde.getStatut() == 1) {
-                // Pas de ronde précédente ou dernière ronde terminée => on peut lancer
-                lancerRonde();
-            } else {
-                // Dernière ronde ouverte => interdiction
-                Notification.show("Impossible de créer une nouvelle ronde : la ronde précédente n'est pas terminée !");
-            }
+        fermerDerniereRondeSiTempsDepasse();
 
-        } catch (SQLException ex) {
-            Notification.show("Erreur : " + ex.getMessage());
+
+        int nbRondesExistantes = Ronde.countRondesByTournoi(con, idTournoi);
+        Tournoi t = Tournoi.findTournoiById(con, idTournoi);
+
+        if (nbRondesExistantes >= t.getNbrRonde()) {
+            Notification.show("Impossible de créer une nouvelle ronde : le nombre maximum de rondes (" + t.getNbrRonde() + ") est atteint.");
+            return;
         }
-    });
+
+        Ronde derniereRonde = Ronde.findDerniereRondeByTournoi(con, idTournoi);
+        if (derniereRonde == null || derniereRonde.getStatut() == 1) {
+            lancerRonde();
+        } else {
+            Notification.show("Impossible de créer une nouvelle ronde : la ronde précédente n'est pas terminée !");
+        }
+
+    } catch (SQLException ex) {
+        Notification.show("Erreur : " + ex.getMessage());
+    }
+});
+
 
     Button retour = new Button("Retour", e -> UI.getCurrent().navigate("tournoi"));
     add(lancer, retour);
@@ -194,7 +202,7 @@ public class GestionTournoi extends VerticalLayout
 
     try (Connection con = ConnectionPool.getConnection()) {
 
-        int idRonde = SessionInfo.getSelectedRondeId();
+        int idRonde = SessionInfo.getLastCreatedRonde();
 
         Tournoi tournoi = Tournoi.findTournoiById(con, idTournoi);
 
@@ -287,56 +295,54 @@ public class GestionTournoi extends VerticalLayout
 
     private void fermerDerniereRondeSiTempsDepasse() {
     try (Connection con = ConnectionPool.getConnection()) {
-
-        // Récupérer la dernière ronde du tournoi
         Ronde derniereRonde = Ronde.findDerniereRondeByTournoi(con, idTournoi);
-        Tournoi t = Tournoi.findTournoiById(con, idTournoi);
-        int idRonde = derniereRonde.getId();
         if (derniereRonde != null && derniereRonde.getStatut() == 0) {
-
-            long delai = t.temps() * 1000L;
+            long delai = Tournoi.findTournoiById(con, idTournoi).temps() * 1000L;
             long tempsEcoule = System.currentTimeMillis() - derniereRonde.getTimestampDebut().getTime();
 
             if (tempsEcoule >= delai) {
-                // Fermer la ronde
-                derniereRonde.setStatut(1); // 1 = terminée
+                derniereRonde.setStatut(1);
                 derniereRonde.updateTimestampFinAndStatut(con);
+                Notification.show("La dernière ronde a été automatiquement fermée.");
 
-                Notification.show("La dernière ronde a été automatiquement fermée après 30 minutes.");
-                List<Equipe> equipes = Equipe.equipesByTournoiandRonde(con,SessionInfo.getSelectedTournoiId(), idRonde);
-                for (Equipe e : equipes) {
-                    Integer scoreEquipe = demanderScorePourEquipe(e);
-                    if (scoreEquipe != null) {
-
-                List<Joueur> joueurs = Joueur.allJoueursByEquipe(con, e.getId());
-                for (Joueur j : joueurs) {
-                    j.setScore(scoreEquipe+j.getScore());
-                    j.updateScore(con);
-                }
-            }
-            }
+                List<Equipe> equipes = Equipe.equipesByTournoiandRonde(con, idTournoi, derniereRonde.getId());
+                demanderScoresPourEquipes(equipes); // pas de con ici !
             }
         }
-
     } catch (SQLException ex) {
-        Notification.show("Erreur lors de la fermeture automatique de la ronde : " + ex.getMessage());
+        Notification.show("Erreur lors de la fermeture automatique : " + ex.getMessage());
     }
 }
 
-    private Integer demanderScorePourEquipe(Equipe e) {
+private void demanderScoresPourEquipes(List<Equipe> equipes) {
+    if (equipes.isEmpty()) return;
 
+    Equipe e = equipes.get(0);
     TextField scoreField = new TextField("Score pour " + e.getNom());
     scoreField.setPlaceholder("Entrez le score");
+
     Dialog dialog = new Dialog();
-    Button ok = new Button("OK", ev -> dialog.close());
+    Button ok = new Button("OK", ev -> {
+        try (Connection con = ConnectionPool.getConnection()) { // nouvelle connection par équipe
+            int scoreEquipe = Integer.parseInt(scoreField.getValue());
+            List<Joueur> joueurs = Joueur.allJoueursByEquipe(con, e.getId());
+            for (Joueur j : joueurs) {
+                j.setScore(scoreEquipe + j.getScore());
+                j.updateScore(con);
+            }
+            Notification.show("Scores mis à jour pour " + e.getNom());
+        } catch (SQLException ex) {
+            Notification.show("Erreur DB : " + ex.getMessage());
+        } catch (NumberFormatException ex) {
+            Notification.show("Score invalide");
+        }
+
+        dialog.close();
+        demanderScoresPourEquipes(new ArrayList<>(equipes.subList(1, equipes.size()))); // nouvelle liste pour récursion sûre
+    });
+
     dialog.add(scoreField, ok);
     dialog.open();
-
-    try {
-        return Integer.parseInt(scoreField.getValue());
-    } catch (NumberFormatException ex) {
-        return 0; 
-    }
 }
 
 }
