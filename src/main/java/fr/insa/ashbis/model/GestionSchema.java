@@ -56,6 +56,7 @@ public class GestionSchema {
                         + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
                         + " nom varchar(64) not null,"
                         + " idTerrain integer,"
+                        + " idRonde integer,"
                         + " idTournoi integer not null"
                         + ")"
                 );
@@ -75,8 +76,10 @@ public class GestionSchema {
                         + " maxEquipeTerrain integer not null,"
                         + " nbrRonde integer not null," 
                         + " minJoueurEquipe integer not null,"
-                        + " randomizationTeam integer not null,"
-                        + " inscriptionlibre integer not null"
+                        + " temps integer not null,"
+                        + " inscriptionlibre integer not null,"
+                        + " numRonde integer not null,"
+                        + "statut integer not null"
                         + ")"
                 );
                 

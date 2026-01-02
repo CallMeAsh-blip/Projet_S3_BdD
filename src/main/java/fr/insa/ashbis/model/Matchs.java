@@ -8,8 +8,11 @@ import fr.insa.beuvron.utils.database.ClasseMiroir;
 import fr.insa.beuvron.utils.database.ConnectionSimpleSGBD;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -26,6 +29,15 @@ public class Matchs extends ClasseMiroir {
         this.idRonde = idRonde;
         this.idTournoi = tournoi;
     }
+
+    public Matchs(int idTerrain, int idRonde, int idTournoi, int id) {
+        super(id);
+        this.idTerrain = idTerrain;
+        this.idRonde = idRonde;
+        this.idTournoi = idTournoi;
+    }
+    
+    
     
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
@@ -99,5 +111,37 @@ public class Matchs extends ClasseMiroir {
             throw new Error(ex);
         }
     }
+    
+    public static List<Matchs> allMatchsByRonde(Connection con, int idRonde)
+            throws SQLException {
+
+        List<Matchs> matchs = new ArrayList<>();
+
+        String sql = """
+            SELECT id, idTerrain, idRonde, idTournoi
+            FROM matchs
+            WHERE idRonde = ?
+            ORDER BY id
+        """;
+
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, idRonde);
+            
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    Matchs m = new Matchs(
+                        rs.getInt("idTerrain"),
+                        rs.getInt("idRonde"),
+                        rs.getInt("idTournoi"),
+                        rs.getInt("id")
+                    );
+
+                    matchs.add(m);
+                }
+            }
+        }
+        return matchs;
+    }
+
     
 }

@@ -19,7 +19,7 @@ along with CoursBeuvron.  If not, see <http://www.gnu.org/licenses/>.
 package fr.insa.ashbis.webui.layout;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
-import fr.insa.ashbis.webui.menu.MainMenu;
+import fr.insa.ashbis.webui.menu.SecondaryMenu;
 import fr.insa.ashbis.webui.session.LoginEntete;
 import fr.insa.ashbis.webui.session.LogoutEntete;
 import fr.insa.ashbis.webui.session.SessionInfo;
@@ -31,7 +31,7 @@ import fr.insa.ashbis.webui.session.SessionInfo;
 public class SecondaryLayout extends AppLayout{
     
     public SecondaryLayout() {
-        this.addToDrawer(new MainMenu());
+        this.addToDrawer(new SecondaryMenu());
         DrawerToggle toggle = new DrawerToggle();
         this.addToNavbar(toggle);
         if (SessionInfo.userConnected()) {

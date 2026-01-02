@@ -8,8 +8,11 @@ import fr.insa.beuvron.utils.database.ClasseMiroir;
 import fr.insa.beuvron.utils.database.ConnectionSimpleSGBD;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -20,10 +23,20 @@ public class Equipe extends ClasseMiroir {
     private String nom;
     private int terrain;
     private int idTournoi;
-    public Equipe(String nom, int terrain, int tournoi) {
+    private int idRonde;
+    public Equipe(String nom, int terrain, int idRonde, int tournoi) {
         this.nom = nom;
         this.terrain = terrain;
+        this.idRonde = idRonde;
         this.idTournoi = tournoi;
+    }
+
+    public Equipe(String nom, int terrain, int idRonde, int idTournoi, int id) {
+        super(id);
+        this.idRonde = idRonde;
+        this.nom = nom;
+        this.terrain = terrain;
+        this.idTournoi = idTournoi;
     }
 
     
@@ -31,12 +44,13 @@ public class Equipe extends ClasseMiroir {
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
         PreparedStatement pst = con.prepareStatement(
-                "insert into equipe(nom,idTerrain,idTournoi) values (?,?,?)",
+                "insert into equipe(nom,idTerrain,idRonde,idTournoi) values (?,?,?,?)",
                 PreparedStatement.RETURN_GENERATED_KEYS
         );
         pst.setString(1, this.nom);
         pst.setInt(2, this.terrain);
-        pst.setInt(3, this.idTournoi);
+        pst.setInt(3, this.idRonde);
+        pst.setInt(4, this.idTournoi);
         pst.executeUpdate();
         return pst;
     }
@@ -54,7 +68,7 @@ public class Equipe extends ClasseMiroir {
     
     public static void testCreerE() {
         try {
-            Equipe e = new Equipe("test", 1,1);
+            Equipe e = new Equipe("test", 1,1,1);
             System.out.println("joueur :" + e);
             e.saveInDB(ConnectionSimpleSGBD.defaultCon());
             System.out.println("joueur :" + e);
@@ -101,5 +115,27 @@ public class Equipe extends ClasseMiroir {
     public void setIdTournoi(int tournoi) {
         this.idTournoi = tournoi;
     }
+    
+    public static List<Equipe> equipesByTournoiandRonde(Connection con, int idTournoi,int idRonde) throws SQLException {
+    List<Equipe> equipes = new ArrayList<>();
+    String sql = "SELECT id, nom, idTerrain,idRonde, idTournoi FROM equipe WHERE idTournoi = ? and idRonde = ?";
+    try (PreparedStatement pst = con.prepareStatement(sql)) {
+        pst.setInt(1, idTournoi);
+        pst.setInt(2, idRonde);
+        try (ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                equipes.add(new Equipe(
+                    rs.getString("nom"),
+                    rs.getInt("idTerrain"),
+                    rs.getInt("idTournoi"),
+                    rs.getInt("id")
+                ));
+            }
+        }
+    }
+    return equipes;
+}
+
+
     
 }

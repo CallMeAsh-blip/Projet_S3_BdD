@@ -29,7 +29,7 @@ public class CreerTournoi extends FormLayout {
     private final IntegerField maxEquipeTerrain;
     private final IntegerField nbrRonde;
 
-    private final Checkbox randomizationTeam;
+    private final IntegerField temps;
     private final Checkbox inscriptionLibre;
 
     private final Button creer = new Button("Créer le tournoi");
@@ -44,7 +44,7 @@ public class CreerTournoi extends FormLayout {
         this.maxEquipeTerrain = new IntegerField("Équipes par terrain");
         this.nbrRonde = new IntegerField("Nombre de rondes");
 
-        this.randomizationTeam = new Checkbox("Génération aléatoire des équipes");
+        this.temps = new IntegerField("temps des rondes (en sec)");
         this.inscriptionLibre = new Checkbox("Inscription libre");
 
         this.optAdmin = SessionInfo.curUser();
@@ -60,8 +60,7 @@ public class CreerTournoi extends FormLayout {
         maxJoueurEquipe.setMin(1);
         maxEquipeTerrain.setMin(1);
         nbrRonde.setMin(1);
-
-        randomizationTeam.setValue(false);
+        temps.setMin(1);
         inscriptionLibre.setValue(false);
 
         creer.addClickListener(e -> doCreate(optAdmin.get()));
@@ -78,7 +77,7 @@ public class CreerTournoi extends FormLayout {
             maxJoueurEquipe,
             maxEquipeTerrain,
             nbrRonde,
-            randomizationTeam,
+            temps,
             inscriptionLibre,
             creer
         );
@@ -99,8 +98,10 @@ public class CreerTournoi extends FormLayout {
                 maxEquipeTerrain.getValue(),
                 nbrRonde.getValue(),
                 minJoueurEquipe.getValue(),
-                randomizationTeam.getValue() ? 1 : 0,
-                inscriptionLibre.getValue() ? 1 : 0
+                temps.getValue(),
+                inscriptionLibre.getValue() ? 1 : 0,
+                0,
+                0
             );
 
             try (Connection con = ConnectionPool.getConnection()) {

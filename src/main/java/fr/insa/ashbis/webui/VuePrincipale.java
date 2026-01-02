@@ -23,7 +23,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -32,6 +31,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import fr.insa.ashbis.model.Tournoi;
+import fr.insa.ashbis.webui.session.SessionInfo;
 import fr.insa.beuvron.utils.database.ConnectionPool;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -63,12 +63,22 @@ public class VuePrincipale extends VerticalLayout {
 
         grid.addColumn(Tournoi::getNbrTerrain)
             .setHeader("Terrains");
+        
+        grid.addColumn(tournoi -> {
+            if (tournoi.getStatut() == 0) {
+                return "Ouvert";
+            } else {
+                return "Fermé";
+            }
+        }).setHeader("Statut");
+
 
         grid.addColumn(new ComponentRenderer<>(tournoi -> {
             Button btn = new Button("Voir");
-            btn.addClickListener(e ->
-                UI.getCurrent().navigate("tournoi/" + tournoi.getId())
-            );
+            btn.addClickListener(e ->{
+                SessionInfo.setSelectedTournoiId(tournoi.getId());
+                UI.getCurrent().navigate("tournoi");
+            });
             return btn;
         })).setHeader("Action");
 
@@ -79,7 +89,7 @@ public class VuePrincipale extends VerticalLayout {
 
             grid.setDataProvider(dataProvider);
 
-            // 🔎 Filtre par nom
+            // Filtre par nom
             recherche.addValueChangeListener(e -> {
                 String filtre = e.getValue().toLowerCase();
                 dataProvider.setFilter(

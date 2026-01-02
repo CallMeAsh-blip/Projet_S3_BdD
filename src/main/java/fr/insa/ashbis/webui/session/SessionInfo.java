@@ -28,10 +28,15 @@ import java.util.Optional;
  * @author francois
  */
 public class SessionInfo implements Serializable{
+    private static Integer selectedTournoiId = null;
     
     private static final long serialVersionUID = 1L;
     
     private Admin curUser;
+    
+    private static int lastCreatedRonde=-1;
+    
+    private static int selectedRondeId;
     
     public static SessionInfo getOrCreate() {
         VaadinSession curSession = VaadinSession.getCurrent();
@@ -62,10 +67,34 @@ public class SessionInfo implements Serializable{
         }
     }
     
+    public static void setlastCreatedRonde(int id){
+        lastCreatedRonde = id;
+    }
+    
+    public static int getLastCreatedRonde(){
+        return lastCreatedRonde;
+    }
+    
     public static boolean userConnected() {
         return curUser().isPresent();
     }
     
+
+    public static void setSelectedTournoiId(Integer id) {
+        selectedTournoiId = id;
+    }
+
+    public static Integer getSelectedTournoiId() {
+        return selectedTournoiId;
+    }
+    
+    public static void setSelectedRondeId(Integer id) {
+        selectedRondeId = id;
+    }
+
+    public static Integer getSelectedRondeId() {
+        return selectedRondeId;
+    }
     
     
 }

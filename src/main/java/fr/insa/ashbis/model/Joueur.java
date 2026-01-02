@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -28,7 +29,6 @@ public class Joueur extends ClasseMiroir {
     private int idEquipe;
     private int priority;
     private int idTournoi;
-    private int id;
 
     public Joueur(String prenom, String nom, String genre, String DateDeNaissance, int score, int IdEquipe, int priority, int tournoi) {
         this.prenom = prenom;
@@ -40,6 +40,18 @@ public class Joueur extends ClasseMiroir {
         this.priority = priority;
         this.idTournoi = tournoi;
 
+    }
+
+    public Joueur(String prenom, String nom, String genre, String dateDeNaissance, int score, int idEquipe, int priority, int idTournoi, int id) {
+        super(id);
+        this.prenom = prenom;
+        this.nom = nom;
+        this.genre = genre;
+        this.dateDeNaissance = dateDeNaissance;
+        this.score = score;
+        this.idEquipe = idEquipe;
+        this.priority = priority;
+        this.idTournoi = idTournoi;
     }
 
     
@@ -70,7 +82,7 @@ public class Joueur extends ClasseMiroir {
     
     public static void testCreer() {
         try {
-            Joueur j = new Joueur("test", "test","non binaire","2006-12-08",0,0,1,1);
+            Joueur j = new Joueur("test", "test","non binaire","2006-12-08",0,1,0,1);
             System.out.println("joueur :" + j);
             j.saveInDB(ConnectionSimpleSGBD.defaultCon());
             System.out.println("joueur :" + j);
@@ -79,15 +91,11 @@ public class Joueur extends ClasseMiroir {
         }
     }
     public void resetPriority(){
-        if(this.priority==1){
-            this.priority=0;
-        }
+        this.priority=0;    
     }
     
     public void setPriority(){
-        if(this.priority==0){
-            this.priority=1;
-        }
+        this.priority=1;
     }
     public static void main(String[] args) {
         testCreer();
@@ -195,22 +203,6 @@ public class Joueur extends ClasseMiroir {
         this.idTournoi = tournoi;
     }
 
-    /**
-     * @return the tournoi
-     */
-    public int getId() {
-        return id;
-    }
-
-    
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-    
-
 
     public static List<Joueur> allJoueursByTournoi(Connection con, int idTournoi) throws SQLException {
         List<Joueur> joueurs = new ArrayList<>();
@@ -227,15 +219,154 @@ public class Joueur extends ClasseMiroir {
                             rs.getInt("score"),
                             rs.getInt("idEquipe"),
                             rs.getInt("priority"),
-                            rs.getInt("idTournoi")
+                            rs.getInt("idTournoi"),
+                            rs.getInt("id")
                         );
-                    j.setId(rs.getInt("id"));
                     joueurs.add(j);
                 }
             }
         }
         return joueurs;
     }
+    
+    public static int countJoueurByTournoi(Connection con, int idTournoi)
+        throws SQLException {
+
+        String sql = "SELECT COUNT(*) FROM joueur WHERE idTournoi = ?";
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, idTournoi);
+            try (ResultSet rs = pst.executeQuery()) {
+                rs.next();
+                return rs.getInt(1);
+            }
+        }
+    }
 
     
+    public String findEquipe(Connection con) throws SQLException {
+        if (this.idEquipe ==0) {
+            return "Aucune équipe";
+        }
+        else{
+            try (PreparedStatement pst = con.prepareStatement(
+                    "SELECT nom FROM equipe WHERE id = ?")) {
+
+                pst.setInt(1, this.idEquipe);
+                ResultSet res = pst.executeQuery();
+
+                if (res.next()) {
+                    return res.getString("nom");
+                } else {
+                    return "Aucune équipe";
+                }
+            }
+        }
+    }
+
+    public static List<Joueur> allJoueursPrioritairesByTournoi(Connection con, int idTournoi)
+        throws SQLException {
+
+        List<Joueur> joueurs = new ArrayList<>();
+
+        String sql = """
+            SELECT id, prenom, nom, genre, dateDeNaissance, score,
+            idEquipe, priority, idTournoi
+            FROM joueur
+            WHERE idTournoi = ? AND priority = 1
+            """;
+
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, idTournoi);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    joueurs.add(new Joueur(
+                        rs.getString("prenom"),
+                        rs.getString("nom"),
+                        rs.getString("genre"),
+                        rs.getDate("dateDeNaissance").toString(),
+                        rs.getInt("score"),
+                        rs.getInt("idEquipe"),
+                        rs.getInt("priority"),
+                        rs.getInt("idTournoi"),
+                        rs.getInt("id")
+                    ));
+                }
+            }
+        }
+        return joueurs;
+    }
+    
+    public void updatePriority(Connection con) throws SQLException {
+
+        if (this.getId() == -1) {
+            throw new IllegalStateException("Joueur non enregistré");
+        }
+
+        try (PreparedStatement pst = con.prepareStatement(
+            "UPDATE joueur SET priority = ? WHERE id = ?")) {
+
+            pst.setInt(1, this.priority);
+            pst.setInt(2, this.getId());
+            pst.executeUpdate();
+        }
+    }
+
+    public void updateEquipe(Connection con) throws SQLException {
+
+        if (this.getId() <= 0) {
+            throw new IllegalStateException("Joueur non enregistré");
+        }
+
+        try (PreparedStatement pst = con.prepareStatement(
+            "UPDATE joueur SET idEquipe = ? WHERE id = ?")) {
+
+            pst.setInt(1, this.idEquipe);
+            pst.setInt(2, this.getId());
+            pst.executeUpdate();
+        }
+    }
+    
+    public void deleteInDB(Connection con) throws SQLException {
+        if (this.getId() <= 0) {
+            throw new IllegalStateException("joueur non enregistré");
+        }
+        
+        try (PreparedStatement pst = con.prepareStatement(
+                "DELETE FROM tournoi WHERE id = ?")) {
+            pst.setInt(1, this.getId());
+            pst.executeUpdate();
+        }
+    }
+    
+    public static List<Joueur> allJoueursByEquipe(Connection con, int idEquipe) throws SQLException {
+    List<Joueur> joueurs = new ArrayList<>();
+    String sql = "SELECT * FROM joueur WHERE idEquipe = ?";
+    try (PreparedStatement pst = con.prepareStatement(sql)) {
+        pst.setInt(1, idEquipe);
+        try (ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                Joueur j = new Joueur(rs.getString("prenom"),
+                        rs.getString("nom"),
+                        rs.getString("genre"),
+                        rs.getDate("dateDeNaissance").toString(),
+                        rs.getInt("score"),
+                        rs.getInt("idEquipe"),
+                        rs.getInt("priority"),
+                        rs.getInt("idTournoi"),
+                        rs.getInt("id"));
+                joueurs.add(j);
+            }
+        }
+    }
+    return joueurs;
+}
+    public void updateScore(Connection con) throws SQLException {
+        String sql = "UPDATE equipe SET score = ? WHERE id = ?";
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, this.score);
+            pst.setInt(2, this.getId());
+            pst.executeUpdate();
+        }
+    }
 }

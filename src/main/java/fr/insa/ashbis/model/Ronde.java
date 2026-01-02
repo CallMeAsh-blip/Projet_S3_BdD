@@ -10,7 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -34,6 +36,16 @@ public class Ronde extends ClasseMiroir{
         this.statut = statut;
         this.idTournoi = idTournoi;
     }
+
+    public Ronde(Timestamp timestampDebut, Timestamp timestampFin, int statut, int idTournoi, int id) {
+        super(id);
+        this.timestampDebut = timestampDebut;
+        this.timestampFin = timestampFin;
+        this.statut = statut;
+        this.idTournoi = idTournoi;
+    }
+    
+    
     
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
@@ -49,9 +61,9 @@ public class Ronde extends ClasseMiroir{
         pst.setInt(2, this.statut);
         pst.setInt(3, this.idTournoi);
         if (this.timestampFin == null) {
-            pst.setNull(1, java.sql.Types.TIMESTAMP);
+            pst.setNull(4, java.sql.Types.TIMESTAMP);
         } else {
-            pst.setTimestamp(1, this.timestampFin);
+            pst.setTimestamp(4, this.timestampFin);
         }
         
         pst.executeUpdate();
@@ -114,6 +126,116 @@ public class Ronde extends ClasseMiroir{
         this.idTournoi = idTournoi;
     }
     
+    public static List<Ronde> allRondesByTournoi(Connection con, int idTournoi)
+        throws SQLException {
+
+        List<Ronde> rondes = new ArrayList<>();
+
+        String sql = """
+            SELECT id, timestampDebut, timestampFin, statut, idTournoi
+            FROM ronde
+            WHERE idTournoi = ?
+            ORDER BY id
+        """;
+
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, idTournoi);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    Ronde r = new Ronde(                           
+                            rs.getTimestamp("timestampDebut"),
+                            rs.getTimestamp("timestampFin"),
+                            rs.getInt("statut"),
+                            rs.getInt("idTournoi"),
+                            rs.getInt("id")
+                    );
+                    rondes.add(r);
+                }
+            }
+        }
+        return rondes;
+    }
+    
+     public static int statutById(Connection con, int idRonde) throws SQLException {
+        String sql = "SELECT statut FROM ronde WHERE id = ?";
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, idRonde);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("statut"); // retourne le statut
+                } else {
+                    throw new SQLException("Ronde introuvable pour id = " + idRonde);
+                }
+            }
+        }
+    }
+     
+   
+
+    public void close(Connection con) throws SQLException {
+        this.timestampFin = new Timestamp(System.currentTimeMillis());
+        this.statut = 1;
+        updateTimestampFinAndStatut(con);
+    }
+
+    
+    public void updateTimestampFinAndStatut(Connection con) throws SQLException {
+
+        if (this.getId() == -1) {
+            throw new IllegalStateException(
+            "Impossible de mettre à jour la ronde : ronde non sauvegardée"
+            );
+        }   
+
+        
+    
+        String sql = """
+            UPDATE ronde
+            SET timestampFin = ?, statut = ?
+            WHERE id = ?
+            """;
+
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+
+
+            if (this.timestampFin == null) {
+                pst.setNull(1, java.sql.Types.TIMESTAMP);
+            } else {
+                pst.setTimestamp(1, this.timestampFin);
+            }
+
+
+            pst.setInt(2, this.statut);
+
+
+            pst.setInt(3, this.getId());
+
+            pst.executeUpdate();
+        }
+    }
+    
+    public static Ronde findDerniereRondeByTournoi(Connection con, int idTournoi) throws SQLException {
+    // retourne la dernière ronde créée pour ce tournoi
+    String sql = "SELECT * FROM ronde WHERE idTournoi = ? ORDER BY numero DESC LIMIT 1";
+    try (PreparedStatement pst = con.prepareStatement(sql)) {
+        pst.setInt(1, idTournoi);
+        try (ResultSet rs = pst.executeQuery()) {
+            if (rs.next()) {
+                return new Ronde(
+                    rs.getTimestamp("timestampDebut"),
+                    rs.getTimestamp("timestampFin"),
+                    rs.getInt("statut"),
+                    rs.getInt("idTournoi"),
+                    rs.getInt("id")
+                );
+            } else {
+                return null; // aucune ronde créée
+            }
+        }
+    }
+}
+
     
 
 }

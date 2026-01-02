@@ -49,13 +49,15 @@ public class VueCompteAdmin extends VerticalLayout {
         grid.addColumn(Tournoi::getNom).setHeader("Tournoi");
         grid.addColumn(Tournoi::getNbrTerrain).setHeader("Terrains");
         grid.addColumn(Tournoi::getMaxJoueurEquipe).setHeader("Joueurs / équipe");
+        
 
         grid.addComponentColumn(t -> {
 
         Button gerer = new Button("Gérer");
-        gerer.addClickListener(e ->
-            UI.getCurrent().navigate("tournoi/" + t.getId())
-        );
+        gerer.addClickListener(e ->{
+            SessionInfo.setSelectedTournoiId(t.getId());
+            UI.getCurrent().navigate("tournoi");
+        });
 
         Button supprimer = new Button("Supprimer");
         supprimer.getStyle().set("color", "red");
