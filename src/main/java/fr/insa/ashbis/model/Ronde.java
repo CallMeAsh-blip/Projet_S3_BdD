@@ -217,7 +217,7 @@ public class Ronde extends ClasseMiroir{
     
     public static Ronde findDerniereRondeByTournoi(Connection con, int idTournoi) throws SQLException {
     // retourne la dernière ronde créée pour ce tournoi
-    String sql = "SELECT * FROM ronde WHERE idTournoi = ? ORDER BY numero DESC LIMIT 1";
+    String sql = "SELECT * FROM ronde WHERE idTournoi = ? ORDER BY id DESC LIMIT 1";
     try (PreparedStatement pst = con.prepareStatement(sql)) {
         pst.setInt(1, idTournoi);
         try (ResultSet rs = pst.executeQuery()) {
@@ -236,6 +236,19 @@ public class Ronde extends ClasseMiroir{
     }
 }
 
-    
+    public static int countRondesByTournoi(Connection con, int idTournoi) throws SQLException {
+    String sql = "SELECT COUNT(*) AS nb FROM ronde WHERE idTournoi = ?";
+    try (PreparedStatement pst = con.prepareStatement(sql)) {
+        pst.setInt(1, idTournoi);
+        try (ResultSet rs = pst.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("nb");
+            } else {
+                return 0;
+            }
+        }
+    }
+}
+
 
 }

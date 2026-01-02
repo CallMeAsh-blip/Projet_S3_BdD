@@ -362,7 +362,7 @@ public class Joueur extends ClasseMiroir {
     return joueurs;
 }
     public void updateScore(Connection con) throws SQLException {
-        String sql = "UPDATE equipe SET score = ? WHERE id = ?";
+        String sql = "UPDATE joueur SET score = ? WHERE id = ?";
         try (PreparedStatement pst = con.prepareStatement(sql)) {
             pst.setInt(1, this.score);
             pst.setInt(2, this.getId());
