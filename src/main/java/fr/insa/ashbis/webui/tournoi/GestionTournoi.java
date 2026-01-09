@@ -108,7 +108,7 @@ public class GestionTournoi extends VerticalLayout
 
         Button lancer = new Button("Lancer la ronde");
 
-        Button fermerRondeBtn = new Button("Aucune ronde en cours");
+        Button fermerRondeBtn = new Button("ronde en cours");
         fermerRondeBtn.setEnabled(false);
         add(fermerRondeBtn);
         initialiserBoutonFermeture(fermerRondeBtn);
@@ -258,7 +258,7 @@ public class GestionTournoi extends VerticalLayout
         int minJoueurEquipe = tournoi.getMinJoueurEquipe();
         int maxEquipeTerrain = tournoi.getMaxEquipeTerrain();
         int joueursParTerrain = minJoueurEquipe * maxEquipeTerrain;
-        int jo=0;
+        
         int maxJouerEquipe = tournoi.getMaxJoueurEquipe();
         int nbTerrainsUtilisables = Math.min(
                 joueurs.size() / joueursParTerrain,
@@ -295,14 +295,14 @@ public class GestionTournoi extends VerticalLayout
             for (int e = 1; e <= maxEquipeTerrain; e++) {
 
                 Equipe equipe = new Equipe(
-                        "Ronde" + idRonde + "_Terrain" + terrain + "_Equipe" + e,
+                        "Ronde" + idRonde + "_T" + terrain + "_Eq" + e,
                         terrain,
                         idRonde,
                         idTournoi
                 );
                 equipe.saveInDB(con);
 
-                for (; jo < minJoueurEquipe; jo++) {
+                for (int jo=0; jo < minJoueurEquipe; jo++) {
                     Joueur joueur = ordre.get(index++);
                     joueur.setIdEquipe(equipe.getId());
                     joueur.resetPriority();             

@@ -41,7 +41,7 @@ import java.sql.SQLException;
  * @author francois
  */
 @Route(value = "", layout = MainLayout.class)
-@PageTitle("Likes")
+@PageTitle("Logiciel de gestion de tournoi")
 public class VuePrincipale extends VerticalLayout {
 
     public VuePrincipale() {

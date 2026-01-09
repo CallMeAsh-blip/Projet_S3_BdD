@@ -33,8 +33,8 @@ public class Login extends FormLayout{
     public Button login;
 
     public Login() {
-        this.surnom = new TextField("surnom : ");
-        this.pass = new PasswordField("pass : ");
+        this.surnom = new TextField("username : ");
+        this.pass = new PasswordField("password : ");
         this.login = new Button("login");
         this.login.addClickListener((t) -> {
             this.doLogin();
@@ -48,7 +48,7 @@ public class Login extends FormLayout{
         try (Connection con = ConnectionPool.getConnection()) {
             Optional<Admin> trouve = Admin.findBySurnomPass(con, surnom, pass);
             if (trouve.isEmpty()) {
-                Notification.show("Surnom ou pass incorrect");
+                Notification.show("username ou password incorrect");
             } else {
                 SessionInfo.login(trouve.get());
                 SessionInfo.setIdAdmin(trouve.get().getId());

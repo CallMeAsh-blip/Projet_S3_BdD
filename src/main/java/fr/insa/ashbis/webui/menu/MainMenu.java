@@ -37,9 +37,9 @@ public class MainMenu extends SideNav{
         SideNavItem accueil = new SideNavItem("accueil",VuePrincipale.class);
         SideNavItem creerTournoi = new SideNavItem("Créer Tournoi",CreerTournoi.class);
         SideNavItem VueCompte = new SideNavItem("Mon compte",VueCompteAdmin.class);
-        this.addItem(accueil,creerTournoi);
+        this.addItem(accueil);
         if (SessionInfo.userConnected()) {
-            this.addItem(VueCompte);
+            this.addItem(VueCompte,creerTournoi);
         }
     }
     

@@ -133,17 +133,24 @@ public class VueTournoi extends VerticalLayout
             
 
             Tournoi tournoi = Tournoi.findTournoiById(con, idTournoi);
+            
+            Button importer = new Button("Importer des joueurs");
+            importer.addClickListener(e -> ouvrirImportJoueurs());
 
             boolean peutAjouter =
                     (tournoi.getInscriptionlibre() == 1
-                 || SessionInfo.curUser().isPresent()) && tournoi.getStatut()==0;
+                 || SessionInfo.isAdminTournoi()) && tournoi.getStatut()==0;
 
             if (peutAjouter) {
                 Button creerJoueur = new Button("Créer un joueur");
                 creerJoueur.addClickListener(e ->
                         UI.getCurrent().navigate("creationJoueur")
                 );
+                
                 bouttons.add(creerJoueur);
+                if(SessionInfo.isAdminTournoi()){
+                    bouttons.add(importer);
+                }
             }
 
         } catch (SQLException ex) {
@@ -153,9 +160,7 @@ public class VueTournoi extends VerticalLayout
         Button retour = new Button("Retour aux tournois",
                 e -> UI.getCurrent().navigate(""));
 
-        Button importer = new Button("Importer des joueurs");
-        importer.addClickListener(e -> ouvrirImportJoueurs());
-        bouttons.add(importer);
+        
 
         
         bouttons.add(retour);

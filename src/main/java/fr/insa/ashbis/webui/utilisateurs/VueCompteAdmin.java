@@ -56,6 +56,8 @@ public class VueCompteAdmin extends VerticalLayout {
         Button gerer = new Button("Gérer");
         gerer.addClickListener(e ->{
             SessionInfo.setSelectedTournoiId(t.getId());
+            SessionInfo.setIdAdminTournoi(t.getIdAdmin());
+            
             UI.getCurrent().navigate("tournoi");
         });
         
