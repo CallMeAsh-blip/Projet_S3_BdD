@@ -20,6 +20,7 @@ package fr.insa.ashbis.webui.session;
 
 import com.vaadin.flow.server.VaadinSession;
 import fr.insa.ashbis.model.Admin;
+import fr.insa.ashbis.model.Tournoi;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -36,7 +37,15 @@ public class SessionInfo implements Serializable{
     
     private static int lastCreatedRonde=-1;
     
+    private static int idAdmin;
+    
+    private static int idAdminTournoi;
+    
     private static int selectedRondeId;
+    
+    private static int idEquipeSelectionne;
+    
+    private static Tournoi tournoicopier;
     
     public static SessionInfo getOrCreate() {
         VaadinSession curSession = VaadinSession.getCurrent();
@@ -71,6 +80,14 @@ public class SessionInfo implements Serializable{
         lastCreatedRonde = id;
     }
     
+    public static void setIdEquipeSelectionne(int id){
+        idEquipeSelectionne = id;
+    }
+    
+    public static int getIdEquipeSelectionne(){
+        return idEquipeSelectionne;
+    }
+    
     public static int getLastCreatedRonde(){
         return lastCreatedRonde;
     }
@@ -95,6 +112,53 @@ public class SessionInfo implements Serializable{
     public static Integer getSelectedRondeId() {
         return selectedRondeId;
     }
+
+    /**
+     * @return the idAdmin
+     */
+    public static int getIdAdmin() {
+        return idAdmin;
+    }
+
+    /**
+     * @param idAdmin the idAdmin to set
+     */
+    public static void setIdAdmin(int id) {
+        idAdmin = id;
+    }
+
+    /**
+     * @return the idAdminTournoi
+     */
+    public static int getIdAdminTournoi() {
+        return idAdminTournoi;
+    }
+
+    /**
+     * @param idAdminTournoi the idAdminTournoi to set
+     */
+    public static void setIdAdminTournoi(int id) {
+        idAdminTournoi = id;
+    }
+    
+    public static boolean isAdminTournoi(){
+        return idAdmin==idAdminTournoi;
+    }
+
+    /**
+     * @return the tournoicopier
+     */
+    public static Tournoi getTournoicopier() {
+        return tournoicopier;
+    }
+
+    /**
+     * @param aTournoicopier the tournoicopier to set
+     */
+    public static void setTournoicopier(Tournoi aTournoicopier) {
+        tournoicopier = aTournoicopier;
+    }
+    
     
     
 }

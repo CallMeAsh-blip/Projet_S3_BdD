@@ -99,6 +99,16 @@ public class GestionSchema {
                         +")"
                 );
                 
+                st.executeUpdate("create table joueur_equipe ( "
+                        + ConnectionSimpleSGBD.sqlForGeneratedKeys(con, "id") + ","
+                        + " idJoueur integer not null,"
+                        + " idEquipe integer not null,"
+                        + " idRonde integer not null,"
+                        + " score integer not null"
+                        + ")"
+                );
+
+                
                 con.commit();
                 
             }
@@ -126,6 +136,7 @@ public class GestionSchema {
                 st.executeUpdate("drop table ronde");
                 st.executeUpdate("drop table matchs");
                 st.executeUpdate("drop table admin");
+                st.executeUpdate("drop table joueur_equipe");
             } catch (SQLException ex) {
             }
         }

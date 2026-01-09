@@ -250,5 +250,25 @@ public class Ronde extends ClasseMiroir{
     }
 }
 
+    public static Ronde findById(Connection con, int idRonde) throws SQLException {
+    String sql = "SELECT * FROM ronde WHERE id = ?";
+    try (PreparedStatement pst = con.prepareStatement(sql)) {
+        pst.setInt(1, idRonde);
+        try (ResultSet rs = pst.executeQuery()) {
+            if (rs.next()) {
+                return new Ronde(
+                    rs.getTimestamp("timestampDebut"),
+                    rs.getTimestamp("timestampFin"),
+                    rs.getInt("statut"),
+                    rs.getInt("idTournoi"),
+                    rs.getInt("id")
+                );
+            } else {
+                return null;
+            }
+        }
+    }
+}
+    
 
 }

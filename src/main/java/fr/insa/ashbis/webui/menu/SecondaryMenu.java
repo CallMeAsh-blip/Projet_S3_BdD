@@ -20,13 +20,18 @@ package fr.insa.ashbis.webui.menu;
 
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
+import fr.insa.ashbis.model.Tournoi;
 import fr.insa.ashbis.webui.session.SessionInfo;
 import fr.insa.ashbis.webui.tournoi.GestionTournoi;
 import fr.insa.ashbis.webui.tournoi.PlanTerrains;
+import fr.insa.ashbis.webui.tournoi.VueEquipes;
 import fr.insa.ashbis.webui.tournoi.VueRonde;
 import fr.insa.ashbis.webui.tournoi.VueTournoi;
+import fr.insa.beuvron.utils.database.ConnectionPool;
+import java.sql.Connection;
+import java.sql.SQLException;
+import static org.apache.coyote.http11.Constants.a;
 
-import fr.insa.ashbis.webui.utilisateurs.VueCompteAdmin;
 
 
 /**
@@ -34,17 +39,17 @@ import fr.insa.ashbis.webui.utilisateurs.VueCompteAdmin;
  * @author ashln
  */
 public class SecondaryMenu extends SideNav{
-    
-    public SecondaryMenu() {
+    private Tournoi t;
+    public SecondaryMenu(){
         SideNavItem accueil = new SideNavItem("Joueurs",VueTournoi.class);
         SideNavItem vueRonde = new SideNavItem("Ronde",VueRonde.class);
         SideNavItem controlTournoi = new SideNavItem("Gestion Tournoi",GestionTournoi.class);
-        SideNavItem VueCompte = new SideNavItem("Mon compte",VueCompteAdmin.class);
+        SideNavItem VueEquipe = new SideNavItem("liste des Equipes",VueEquipes.class);
         SideNavItem PlanTournoi = new SideNavItem("Plan des Terrains",PlanTerrains.class);
-        this.addItem(accueil,vueRonde,PlanTournoi);
-        if (SessionInfo.userConnected()) {
+        this.addItem(accueil,vueRonde,PlanTournoi,VueEquipe);
+        if (SessionInfo.isAdminTournoi()) {
             this.addItem(controlTournoi);
         }
+        
     }
-    
 }

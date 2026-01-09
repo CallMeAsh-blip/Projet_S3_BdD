@@ -58,6 +58,12 @@ public class VueCompteAdmin extends VerticalLayout {
             SessionInfo.setSelectedTournoiId(t.getId());
             UI.getCurrent().navigate("tournoi");
         });
+        
+        Button copier = new Button("Copier");
+        copier.addClickListener(e ->{
+            SessionInfo.setSelectedTournoiId(t.getId());
+            UI.getCurrent().navigate("copierTournoi");
+        });
 
         Button supprimer = new Button("Supprimer");
         supprimer.getStyle().set("color", "red");
@@ -86,7 +92,7 @@ public class VueCompteAdmin extends VerticalLayout {
             dialog.open();
         });
 
-        return new HorizontalLayout(gerer, supprimer);
+        return new HorizontalLayout(gerer, supprimer,copier);
 
     }).setHeader("Actions");
 

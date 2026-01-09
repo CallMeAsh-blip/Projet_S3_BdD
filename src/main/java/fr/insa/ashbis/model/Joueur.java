@@ -206,23 +206,12 @@ public class Joueur extends ClasseMiroir {
 
     public static List<Joueur> allJoueursByTournoi(Connection con, int idTournoi) throws SQLException {
         List<Joueur> joueurs = new ArrayList<>();
-        String sql = "SELECT id, prenom, nom, genre, dateDeNaissance, score, idEquipe, priority, idTournoi FROM joueur WHERE idTournoi = ?";
+        String sql = "SELECT id, prenom, nom, genre, dateDeNaissance, score, idEquipe, priority, idTournoi FROM joueur WHERE idTournoi = ? order by score DESC";
         try (PreparedStatement pst = con.prepareStatement(sql)) {
             pst.setInt(1, idTournoi);
             try (ResultSet rs = pst.executeQuery()) {
                 while (rs.next()) {
-                    Joueur j = new Joueur(
-                            rs.getString("prenom"),
-                            rs.getString("nom"),
-                            rs.getString("genre"),
-                            rs.getDate("dateDeNaissance").toString(),
-                            rs.getInt("score"),
-                            rs.getInt("idEquipe"),
-                            rs.getInt("priority"),
-                            rs.getInt("idTournoi"),
-                            rs.getInt("id")
-                        );
-                    joueurs.add(j);
+                    joueurs.add(fromResultSet(rs));
                 }
             }
         }
@@ -280,17 +269,7 @@ public class Joueur extends ClasseMiroir {
 
             try (ResultSet rs = pst.executeQuery()) {
                 while (rs.next()) {
-                    joueurs.add(new Joueur(
-                        rs.getString("prenom"),
-                        rs.getString("nom"),
-                        rs.getString("genre"),
-                        rs.getDate("dateDeNaissance").toString(),
-                        rs.getInt("score"),
-                        rs.getInt("idEquipe"),
-                        rs.getInt("priority"),
-                        rs.getInt("idTournoi"),
-                        rs.getInt("id")
-                    ));
+                    joueurs.add(fromResultSet(rs));
                 }
             }
         }
@@ -346,16 +325,7 @@ public class Joueur extends ClasseMiroir {
         pst.setInt(1, idEquipe);
         try (ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
-                Joueur j = new Joueur(rs.getString("prenom"),
-                        rs.getString("nom"),
-                        rs.getString("genre"),
-                        rs.getDate("dateDeNaissance").toString(),
-                        rs.getInt("score"),
-                        rs.getInt("idEquipe"),
-                        rs.getInt("priority"),
-                        rs.getInt("idTournoi"),
-                        rs.getInt("id"));
-                joueurs.add(j);
+                joueurs.add(fromResultSet(rs));
             }
         }
     }
@@ -369,4 +339,48 @@ public class Joueur extends ClasseMiroir {
             pst.executeUpdate();
         }
     }
+    
+    public static Joueur fromResultSet(ResultSet rs) throws SQLException {
+        Joueur j = new Joueur(rs.getString("prenom"),
+            rs.getString("nom"),
+            rs.getString("genre"),
+            rs.getDate("dateDeNaissance").toString(),
+            rs.getInt("score"),
+            rs.getInt("idEquipe"),
+            rs.getInt("priority"),
+            rs.getInt("idTournoi"),
+            rs.getInt("id"));
+        return j;
+    }
+    
+    public static List<Joueur> allJoueursNotInTournoi(Connection con, int idTournoi) throws SQLException {
+        List<Joueur> joueurs = new ArrayList<>();
+        String sql = "SELECT * FROM joueur WHERE idTournoi != ?";
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, idTournoi);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    joueurs.add(fromResultSet(rs));
+                }
+            }
+        }
+        return joueurs;
+    }
+    
+    public static void ImportJoueurInTournois(Connection con, int idTournoi, Joueur j) throws SQLException{
+        PreparedStatement pst = con.prepareStatement(
+                "insert into joueur(prenom,nom,genre,dateDeNaissance,priority,score,idEquipe,idTournoi) values (?,?,?,?,?,?,?,?)",
+                PreparedStatement.RETURN_GENERATED_KEYS
+        );
+        pst.setString(1, j.getPrenom());
+        pst.setString(2, j.getNom());
+        pst.setString(3, j.getGenre());
+        pst.setDate(4, java.sql.Date.valueOf(j.dateDeNaissance));
+        pst.setInt(5, 0);
+        pst.setInt(6, 0);
+        pst.setInt(7, 0);
+        pst.setInt(8, idTournoi);
+        pst.executeUpdate();
+    }
+
 }

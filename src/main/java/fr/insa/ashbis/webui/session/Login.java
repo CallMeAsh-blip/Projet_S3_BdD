@@ -51,6 +51,7 @@ public class Login extends FormLayout{
                 Notification.show("Surnom ou pass incorrect");
             } else {
                 SessionInfo.login(trouve.get());
+                SessionInfo.setIdAdmin(trouve.get().getId());
                 UI.getCurrent().refreshCurrentRoute(true);
             }
         } catch (SQLException ex) {

@@ -62,6 +62,7 @@ public class Tournoi extends ClasseMiroir{
     
     
     
+    
     @Override
     protected Statement saveSansId(Connection con) throws SQLException {
         
@@ -252,14 +253,14 @@ public class Tournoi extends ClasseMiroir{
      * @return the randomizationTeam
      */
     public int temps() {
-        return temps;
+        return getTemps();
     }
 
     /**
      * @param randomizationTeam the randomizationTeam to set
      */
     public void temps(int randomizationTeam) {
-        this.temps = randomizationTeam;
+        this.setTemps(randomizationTeam);
     }
 
     /**
@@ -360,6 +361,20 @@ public class Tournoi extends ClasseMiroir{
             pst.executeUpdate();
         }
 }
+
+    /**
+     * @return the temps
+     */
+    public int getTemps() {
+        return temps;
+    }
+
+    /**
+     * @param temps the temps to set
+     */
+    public void setTemps(int temps) {
+        this.temps = temps;
+    }
 
     
 }

@@ -77,6 +77,7 @@ public class VuePrincipale extends VerticalLayout {
             Button btn = new Button("Voir");
             btn.addClickListener(e ->{
                 SessionInfo.setSelectedTournoiId(tournoi.getId());
+                SessionInfo.setIdAdminTournoi(tournoi.getIdAdmin());
                 UI.getCurrent().navigate("tournoi");
             });
             return btn;
