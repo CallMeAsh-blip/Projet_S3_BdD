@@ -48,7 +48,7 @@ public class VueCompteAdmin extends VerticalLayout {
         Grid<Tournoi> grid = new Grid<>();
         grid.addColumn(Tournoi::getNom).setHeader("Tournoi");
         grid.addColumn(Tournoi::getNbrTerrain).setHeader("Terrains");
-        grid.addColumn(Tournoi::getMaxJoueurEquipe).setHeader("Joueurs / équipe");
+        grid.addColumn(Tournoi::getMinJoueurEquipe).setHeader("Joueurs / équipe");
         
 
         grid.addComponentColumn(t -> {
