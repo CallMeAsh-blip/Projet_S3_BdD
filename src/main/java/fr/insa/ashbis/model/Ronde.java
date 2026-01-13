@@ -171,6 +171,19 @@ public class Ronde extends ClasseMiroir{
         }
     }
      
+    public static int statutLastRonde(Connection con,int idTournoi) throws SQLException {
+        String sql = "SELECT statut FROM ronde where idTournoi = ? order by id Desc limit 1";
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, idTournoi);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("statut"); // retourne le statut
+                } else {
+                    throw new SQLException("Ronde introuvable pour id");
+                }
+            }
+        }
+    }
    
 
     public void close(Connection con) throws SQLException {
@@ -269,6 +282,6 @@ public class Ronde extends ClasseMiroir{
         }
     }
 }
-    
+
 
 }

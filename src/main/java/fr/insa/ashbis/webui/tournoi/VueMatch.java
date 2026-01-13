@@ -10,7 +10,6 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.*;
 import fr.insa.ashbis.model.Equipe;
 import fr.insa.ashbis.model.Matchs;
@@ -22,6 +21,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 /**
  *
@@ -63,12 +63,16 @@ public class VueMatch extends VerticalLayout
 
             List<Matchs> matchs =
                     Matchs.allMatchsByRonde(con, idRonde);
+            
+            System.out.println(matchs);
+            grid.setItems(matchs);
 
-            grid.setDataProvider(new ListDataProvider<>(matchs));
 
-            grid.addColumn(match ->
-                    matchs.indexOf(match) + 1
-            ).setHeader("Match");
+            AtomicInteger compteur = new AtomicInteger(1);
+
+            grid.addColumn(m -> compteur.getAndIncrement())
+            .setHeader("Match");
+
 
             grid.addColumn(Matchs::getIdTerrain)
                     .setHeader("Terrain");

@@ -87,7 +87,7 @@ public class GestionTournoi extends VerticalLayout
         int nbRondesExistantes = Ronde.countRondesByTournoi(con, idTournoi);
         int nbRondesMax = t.getNbrRonde();
 
-        if (nbRondesExistantes >= nbRondesMax) {
+        if (nbRondesExistantes >= nbRondesMax && Ronde.statutLastRonde(con, idTournoi)==1) {
 
             H2 fin = new H2("Le tournoi est terminé");
             fin.getStyle()
@@ -229,6 +229,7 @@ public class GestionTournoi extends VerticalLayout
             tournoi.updateStatut(con);
 
             Notification.show("Tournoi fermé avec succès");
+            UI.getCurrent().refreshCurrentRoute(true);
 
         } catch (SQLException ex) {
             Notification.show("Erreur : " + ex.getMessage());
@@ -258,7 +259,7 @@ public class GestionTournoi extends VerticalLayout
         int minJoueurEquipe = tournoi.getMinJoueurEquipe();
         int maxEquipeTerrain = tournoi.getMaxEquipeTerrain();
         int joueursParTerrain = minJoueurEquipe * maxEquipeTerrain;
-        
+        int numeroRonde= Ronde.countRondesByTournoi(con, idTournoi);
         int maxJouerEquipe = tournoi.getMaxJoueurEquipe();
         int nbTerrainsUtilisables = Math.min(
                 joueurs.size() / joueursParTerrain,
@@ -295,7 +296,7 @@ public class GestionTournoi extends VerticalLayout
             for (int e = 1; e <= maxEquipeTerrain; e++) {
 
                 Equipe equipe = new Equipe(
-                        "Ronde" + idRonde + "_T" + terrain + "_Eq" + e,
+                        "Ronde" + numeroRonde + "_T" + terrain + "_Eq" + e,
                         terrain,
                         idRonde,
                         idTournoi
@@ -316,7 +317,6 @@ public class GestionTournoi extends VerticalLayout
                     );
                     
                     je.saveInDB(con);
-                    System.out.println(je);
                 }
 //                }while (jo < maxJouerEquipe && index < ordre.size()) {
 //                    Joueur joueur = ordre.get(index);
@@ -366,6 +366,7 @@ public class GestionTournoi extends VerticalLayout
 
         // Fermer la ronde
         r.setStatut(1);
+        r.setTimestampFin(new Timestamp(System.currentTimeMillis()));
         r.updateTimestampFinAndStatut(con);
 
         Notification.show("Ronde fermée");

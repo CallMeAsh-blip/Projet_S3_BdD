@@ -382,5 +382,20 @@ public class Joueur extends ClasseMiroir {
         pst.setInt(8, idTournoi);
         pst.executeUpdate();
     }
+    
+    
+    public static Joueur JoueursHighestScore(Connection con, int idTournoi) throws SQLException {
+    String sql = "SELECT * FROM joueur WHERE idTournoi = ? order by score DESC limit 1";
+    try (PreparedStatement pst = con.prepareStatement(sql)) {
+        pst.setInt(1, idTournoi);
+        try (ResultSet rs = pst.executeQuery()){ 
+            if(rs.next()){
+               return fromResultSet(rs); 
+            }
+            
+        }
+    }
+    return null;
+}
 
 }

@@ -62,7 +62,7 @@ public class VueTournoi extends VerticalLayout
         int nbRondesExistantes = Ronde.countRondesByTournoi(con, idTournoi);
         int nbRondesMax = t.getNbrRonde();
 
-        if (nbRondesExistantes >= nbRondesMax) {
+        if (nbRondesExistantes >= nbRondesMax && Ronde.statutLastRonde(con, idTournoi)==1) {
 
             H2 fin = new H2("Le tournoi est terminé");
             fin.getStyle()
@@ -70,7 +70,29 @@ public class VueTournoi extends VerticalLayout
                .set("font-weight", "bold");
 
             add(fin);
-            return; 
+            
+            Joueur meilleur;
+        try {
+            meilleur = Joueur.JoueursHighestScore(con, idTournoi);
+        } catch (SQLException ex) {
+            Notification.show("Erreur récupération du vainqueur");
+            return;
+        }
+
+        if (meilleur != null) {
+            add(new com.vaadin.flow.component.html.Paragraph(
+            "Vainqueur du tournoi :"
+            ));
+
+            add(new com.vaadin.flow.component.html.Paragraph(
+            meilleur.getPrenom() + " " + meilleur.getNom()
+            + " — Score : " + meilleur.getScore()
+            ));
+        } else {
+            add(new com.vaadin.flow.component.html.Paragraph(
+            "Aucun joueur trouvé"
+            ));
+        }
         }
         }catch (SQLException ex) {
             Notification.show("Problème : " + ex.getMessage());

@@ -53,6 +53,7 @@ public class Login extends FormLayout{
                 SessionInfo.login(trouve.get());
                 SessionInfo.setIdAdmin(trouve.get().getId());
                 UI.getCurrent().refreshCurrentRoute(true);
+                UI.getCurrent().navigate("");
             }
         } catch (SQLException ex) {
             Notification.show("Problème "+ex.getLocalizedMessage());
