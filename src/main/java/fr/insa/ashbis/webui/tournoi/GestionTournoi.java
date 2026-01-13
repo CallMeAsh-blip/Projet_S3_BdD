@@ -296,7 +296,7 @@ public class GestionTournoi extends VerticalLayout
             for (int e = 1; e <= maxEquipeTerrain; e++) {
 
                 Equipe equipe = new Equipe(
-                        "Ronde" + numeroRonde + "_T" + terrain + "_Eq" + e,
+                        "R" + numeroRonde + "_T" + terrain + "_Eq" + e,
                         terrain,
                         idRonde,
                         idTournoi

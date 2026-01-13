@@ -11,7 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -179,10 +181,36 @@ public class Joueur_Equipe extends ClasseMiroir {
         pst.setInt(2, idEquipe);
         pst.setInt(3, idRonde);
         pst.executeUpdate();
-        int nb = pst.executeUpdate();
-    System.out.println("Update score : " + nb + " lignes affectées");
 
     }
 }
+    public static Map<Integer, Integer> scoresParRonde(
+        Connection con, int idRonde
+) throws SQLException {
+
+    Map<Integer, Integer> res = new HashMap<>();
+
+    String sql = """
+        SELECT idEquipe, score
+        FROM joueur_equipe
+        WHERE idRonde = ?
+    """;
+
+    try (PreparedStatement pst = con.prepareStatement(sql)) {
+        pst.setInt(1, idRonde);
+
+        try (ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                res.put(
+                    rs.getInt("idEquipe"),
+                    rs.getInt("score")
+                );
+            }
+        }
+    }
+    return res;
+}
+
+
 
 }

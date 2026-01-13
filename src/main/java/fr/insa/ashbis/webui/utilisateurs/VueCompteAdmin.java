@@ -63,7 +63,7 @@ public class VueCompteAdmin extends VerticalLayout {
         
         Button copier = new Button("Copier");
         copier.addClickListener(e ->{
-            SessionInfo.setSelectedTournoiId(t.getId());
+            SessionInfo.setTournoicopier(t);
             UI.getCurrent().navigate("copierTournoi");
         });
 
